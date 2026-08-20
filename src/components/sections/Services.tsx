@@ -1,7 +1,8 @@
+import { useMemo } from "react";
 import { Users, PenTool, Palette, type LucideIcon } from "lucide-react";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { CarouselEdgeFade, CarouselSwipeHint } from "@/components/ui/carousel-hint";
-import servicesContent from "@/content/services.json";
+import { useContent } from "@/lib/content-store";
 
 interface ServiceContent {
   title: string;
@@ -16,13 +17,17 @@ const colors: { bg: string; fg: string }[] = [
   { bg: "bg-quaternary", fg: "text-white" },
 ];
 
-const services = (servicesContent as ServiceContent[]).map((s, i) => ({
-  ...s,
-  icon: icons[i % icons.length],
-  ...colors[i % colors.length],
-}));
-
 export const Services = () => {
+  const { services: servicesContent } = useContent();
+  const services = useMemo(
+    () =>
+      (servicesContent as ServiceContent[]).map((s, i) => ({
+        ...s,
+        icon: icons[i % icons.length],
+        ...colors[i % colors.length],
+      })),
+    [servicesContent],
+  );
   return (
     <section id="servicios" className="bg-background-soft px-6 md:px-10 py-20 md:py-28">
       <div className="max-w-6xl mx-auto">

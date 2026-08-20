@@ -5,10 +5,10 @@ import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { WhatsAppIcon } from "@/components/ui/brand-icons";
 import { Button } from "@/components/ui/button";
 import { whatsappUrl } from "@/lib/site";
-
-import faqs from "@/content/faq.json";
+import { useContent } from "@/lib/content-store";
 
 export const Support = () => {
+  const { faq: faqs } = useContent();
   const [open, setOpen] = useState<number | null>(0);
 
   return (

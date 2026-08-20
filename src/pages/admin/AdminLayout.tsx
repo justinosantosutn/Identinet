@@ -1,27 +1,27 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { Lock, TriangleAlert } from "lucide-react";
-import site from "@/content/site.json";
+import { useContent } from "@/lib/content-store";
+import { isAdminUnlocked, unlockAdmin } from "@/lib/admin-auth";
 import { sections } from "./schemas";
 
-const GATE_KEY = "identinet-admin-unlocked";
-
 const AdminGate = ({ children }: { children: React.ReactNode }) => {
+  const { site } = useContent();
   const [unlocked, setUnlocked] = useState(false);
   const [passcode, setPasscode] = useState("");
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    setUnlocked(sessionStorage.getItem(GATE_KEY) === "1");
+    setUnlocked(isAdminUnlocked());
   }, []);
 
   if (unlocked) return <>{children}</>;
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const expected = (site as { adminPasscode?: string }).adminPasscode ?? "";
+    const expected = site.adminPasscode ?? "";
     if (passcode === expected) {
-      sessionStorage.setItem(GATE_KEY, "1");
+      unlockAdmin(passcode);
       setUnlocked(true);
     } else {
       setError(true);
@@ -39,9 +39,8 @@ const AdminGate = ({ children }: { children: React.ReactNode }) => {
         <div className="flex items-start gap-2 bg-accent/10 border border-accent/30 rounded-xl p-3 mb-5">
           <TriangleAlert className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
           <p className="text-[11px] text-on-surface-muted leading-relaxed">
-            Este código no es seguridad real — solo evita que alguien entre por accidente. El
-            panel solo funciona con el servidor local corriendo (<code>npm run dev</code>) y no
-            debería quedar accesible en un sitio publicado sin backend propio.
+            Este código protege el panel y también autoriza cada guardado en el servidor. No
+            compartas el link de <code>/admin</code> fuera del equipo.
           </p>
         </div>
         <input

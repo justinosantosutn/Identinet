@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
 import { Upload } from "lucide-react";
+import { upload } from "@vercel/blob/client";
+import { getAdminPasscode } from "@/lib/admin-auth";
 
 interface MediaFieldProps {
   label: string;
@@ -18,36 +20,23 @@ export const MediaField = ({ label, value, accept, onChange }: MediaFieldProps) 
   const [fileInfo, setFileInfo] = useState<{ name: string; size: number } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = (file: File) => {
+  const handleFile = async (file: File) => {
     setFileInfo({ name: file.name, size: file.size });
     setProgress(0);
 
-    const form = new FormData();
-    form.append("file", file);
-
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", `/api/upload?type=${accept}`);
-
-    xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable) setProgress(Math.round((e.loaded / e.total) * 100));
-    };
-
-    xhr.onload = () => {
+    try {
+      const blob = await upload(`${accept}s/${Date.now()}-${file.name}`, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload",
+        clientPayload: JSON.stringify({ passcode: getAdminPasscode() }),
+        onUploadProgress: ({ percentage }) => setProgress(Math.round(percentage)),
+      });
       setProgress(null);
-      if (xhr.status >= 200 && xhr.status < 300) {
-        const data = JSON.parse(xhr.responseText);
-        onChange(data.url);
-      } else {
-        alert("No se pudo subir el archivo. ¿Está corriendo el servidor local (npm run dev)?");
-      }
-    };
-
-    xhr.onerror = () => {
+      onChange(blob.url);
+    } catch (err) {
       setProgress(null);
-      alert("No se pudo subir el archivo. ¿Está corriendo el servidor local (npm run dev)?");
-    };
-
-    xhr.send(form);
+      alert(`No se pudo subir el archivo: ${err instanceof Error ? err.message : String(err)}`);
+    }
   };
 
   const uploading = progress !== null;

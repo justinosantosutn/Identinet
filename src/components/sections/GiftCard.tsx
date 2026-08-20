@@ -1,16 +1,21 @@
+import { useMemo } from "react";
 import { Gift, Palette, ListChecks, PenLine, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { SwirlCorner } from "@/components/ui/swirl-corner";
 import { WhatsAppIcon } from "@/components/ui/brand-icons";
 import { whatsappUrl } from "@/lib/site";
-import giftCardContent from "@/content/giftCard.json";
+import { useContent } from "@/lib/content-store";
 
 const icons: LucideIcon[] = [Palette, ListChecks, PenLine];
-const pasos = giftCardContent.pasos.map((text, i) => ({ text, icon: icons[i % icons.length] }));
-const { importante } = giftCardContent;
 
 export const GiftCard = () => {
+  const { giftCard: giftCardContent } = useContent();
+  const pasos = useMemo(
+    () => giftCardContent.pasos.map((text, i) => ({ text, icon: icons[i % icons.length] })),
+    [giftCardContent],
+  );
+  const { importante } = giftCardContent;
   return (
     <section id="gift-card" className="relative bg-background-soft px-6 md:px-10 py-20 md:py-28 overflow-hidden">
       <SwirlCorner

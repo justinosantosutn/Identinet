@@ -3,11 +3,11 @@ import { TikTokIcon, WhatsAppIcon } from "@/components/ui/brand-icons";
 import { Button } from "@/components/ui/button";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { whatsappUrl } from "@/lib/site";
-import resetDigitalContent from "@/content/resetDigital.json";
-
-const { incluye, beneficios, pasos } = resetDigitalContent;
+import { useContent } from "@/lib/content-store";
 
 export const ResetDigital = () => {
+  const { resetDigital: resetDigitalContent } = useContent();
+  const { incluye, beneficios, pasos } = resetDigitalContent;
   return (
     <section id="reset-digital" className="bg-background-soft px-6 md:px-10 py-20 md:py-28">
       <div className="max-w-5xl mx-auto">

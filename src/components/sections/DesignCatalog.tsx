@@ -1,6 +1,7 @@
+import { useMemo } from "react";
 import { Sparkles, Layers, Package, type LucideIcon } from "lucide-react";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
-import designContent from "@/content/design.json";
+import { useContent } from "@/lib/content-store";
 
 interface CategoryContent {
   title: string;
@@ -14,13 +15,17 @@ const colors: { bg: string; fg: string }[] = [
   { bg: "bg-quaternary", fg: "text-white" },
 ];
 
-const categories = (designContent as CategoryContent[]).map((c, i) => ({
-  ...c,
-  icon: icons[i % icons.length],
-  ...colors[i % colors.length],
-}));
-
 export const DesignCatalog = () => {
+  const { design: designContent } = useContent();
+  const categories = useMemo(
+    () =>
+      (designContent as CategoryContent[]).map((c, i) => ({
+        ...c,
+        icon: icons[i % icons.length],
+        ...colors[i % colors.length],
+      })),
+    [designContent],
+  );
   return (
     <section id="diseno" className="bg-background px-6 md:px-10 py-20 md:py-28">
       <div className="max-w-6xl mx-auto">

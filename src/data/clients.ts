@@ -1,4 +1,4 @@
-import clientsContent from "@/content/clients.json";
+import defaultClientsContent from "@/content/clients.json";
 
 export type Accent = "primary" | "accent" | "quaternary";
 
@@ -21,4 +21,9 @@ export interface ClientCase {
   highlights: Highlight[];
 }
 
-export const clients: ClientCase[] = clientsContent as ClientCase[];
+export const clients: ClientCase[] = [...(defaultClientsContent as ClientCase[])];
+
+export const hydrateClients = (data: ClientCase[]) => {
+  clients.length = 0;
+  clients.push(...data);
+};

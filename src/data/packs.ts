@@ -1,4 +1,4 @@
-import packsContent from "@/content/packs.json";
+import defaultPacksContent from "@/content/packs.json";
 
 export type Accent = "primary" | "accent" | "quaternary";
 
@@ -20,5 +20,12 @@ export interface ComparisonRow {
   impulsar: string;
 }
 
-export const packs: Pack[] = packsContent.packs as Pack[];
-export const comparison: ComparisonRow[] = packsContent.comparison;
+export const packs: Pack[] = [...(defaultPacksContent.packs as Pack[])];
+export const comparison: ComparisonRow[] = [...defaultPacksContent.comparison];
+
+export const hydratePacks = (data: { packs: Pack[]; comparison: ComparisonRow[] }) => {
+  packs.length = 0;
+  packs.push(...data.packs);
+  comparison.length = 0;
+  comparison.push(...data.comparison);
+};

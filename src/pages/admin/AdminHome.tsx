@@ -6,9 +6,8 @@ const AdminHome = () => (
   <div>
     <h1 className="font-display text-3xl text-primary mb-2">Panel de admin</h1>
     <p className="text-on-surface-muted text-sm mb-8">
-      Elegí qué sección del sitio querés editar. Los cambios se guardan al instante en el
-      proyecto — para que el público los vea hay que publicar (build/deploy) como con cualquier
-      cambio de código.
+      Elegí qué sección del sitio querés editar. Los cambios quedan publicados apenas guardás —
+      la página se recarga sola para mostrarlos.
     </p>
 
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

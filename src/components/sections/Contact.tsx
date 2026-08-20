@@ -45,7 +45,7 @@ export const Contact = () => {
             asChild
           >
             <a
-              href={instagramUrl}
+              href={instagramUrl()}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2"
@@ -60,7 +60,7 @@ export const Contact = () => {
             asChild
           >
             <a
-              href={tiktokUrl}
+              href={tiktokUrl()}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2"
@@ -95,7 +95,7 @@ export const Footer = () => {
             <WhatsAppIcon className="w-5 h-5" />
           </a>
           <a
-            href={instagramUrl}
+            href={instagramUrl()}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Instagram"
@@ -104,7 +104,7 @@ export const Footer = () => {
             <InstagramIcon className="w-5 h-5" />
           </a>
           <a
-            href={tiktokUrl}
+            href={tiktokUrl()}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="TikTok"

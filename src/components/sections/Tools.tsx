@@ -1,7 +1,8 @@
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
-import tools from "@/content/tools.json";
+import { useContent } from "@/lib/content-store";
 
 export const Tools = () => {
+  const { tools } = useContent();
   return (
     <section id="herramientas" className="bg-background px-6 md:px-10 py-20 md:py-28">
       <div className="max-w-6xl mx-auto">

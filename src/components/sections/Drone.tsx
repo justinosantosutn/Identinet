@@ -3,11 +3,11 @@ import { WhatsAppIcon } from "@/components/ui/brand-icons";
 import { Button } from "@/components/ui/button";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { whatsappUrl } from "@/lib/site";
-import droneContent from "@/content/drone.json";
-
-const { beneficios, servicios, cotizacion, packsEdicion, herramientas, creditoInstagram } = droneContent;
+import { useContent } from "@/lib/content-store";
 
 export const Drone = () => {
+  const { drone: droneContent } = useContent();
+  const { beneficios, servicios, cotizacion, packsEdicion, herramientas, creditoInstagram } = droneContent;
   return (
     <section id="drone" className="bg-background px-6 md:px-10 py-20 md:py-28">
       <div className="max-w-5xl mx-auto">

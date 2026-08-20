@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Check, ExternalLink, Loader2, RotateCcw, Save } from "lucide-react";
 import { ObjectFields } from "@/components/admin/ObjectFields";
+import { getAdminPasscode } from "@/lib/admin-auth";
 import { getSection } from "./schemas";
 
 type Status = "loading" | "ready" | "saving" | "saved" | "error";
@@ -68,13 +69,18 @@ const ContentEditor = () => {
     try {
       const res = await fetch(`/api/content/${section.key}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-passcode": getAdminPasscode(),
+        },
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setSavedData(data);
       setStatus("saved");
-      setTimeout(() => setStatus("ready"), 1500);
+      // Content is rendered from data fetched once at app boot, so a hard
+      // reload is the simplest way to guarantee every page reflects the save.
+      setTimeout(() => window.location.reload(), 900);
     } catch (err) {
       setError(String(err));
       setStatus("error");
@@ -129,9 +135,7 @@ const ContentEditor = () => {
       {status === "loading" && <p className="text-on-surface-muted text-sm">Cargando…</p>}
 
       {status === "error" && (
-        <p className="text-error text-sm">
-          Hubo un error: {error}. ¿Está corriendo el servidor local (<code>npm run dev</code>)?
-        </p>
+        <p className="text-error text-sm">Hubo un error: {error}.</p>
       )}
 
       {whatsappError && (

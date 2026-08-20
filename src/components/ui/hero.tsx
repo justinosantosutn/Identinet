@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/ui/brand-icons";
-import heroContent from "@/content/hero.json";
+import { useContent } from "@/lib/content-store";
 
 const navLinks = [
   { label: "Packs", href: "#packs" },
@@ -43,7 +43,7 @@ const ArrowAccentRight = () => (
   </svg>
 );
 
-const CircularBadge = () => (
+const CircularBadge = ({ badgeText }: { badgeText: string }) => (
   <div className="relative w-28 h-28 md:w-36 md:h-36 bg-accent rounded-full flex items-center justify-center shadow-xl rotate-12 hover:scale-105 transition-transform cursor-pointer border-[3px] border-white">
     <div className="absolute inset-1 animate-[spin_12s_linear_infinite]">
       <svg viewBox="0 0 100 100" className="w-full h-full">
@@ -58,7 +58,7 @@ const CircularBadge = () => (
           fontFamily="Quicksand, sans-serif"
         >
           <textPath href="#circlePath" startOffset="0%">
-            {heroContent.badgeText}{" "}
+            {badgeText}{" "}
           </textPath>
         </text>
       </svg>
@@ -111,6 +111,7 @@ const FloatingCard = ({
 );
 
 export const Hero = () => {
+  const { hero: heroContent } = useContent();
   return (
     <div className="min-h-screen bg-background flex flex-col font-body selection:bg-accent selection:text-white relative overflow-hidden w-full">
       {/* Background grid */}
@@ -222,7 +223,7 @@ export const Hero = () => {
             </div>
 
             <div className="hidden md:block absolute bottom-[-14%] right-[0%] z-40 pointer-events-auto">
-              <CircularBadge />
+              <CircularBadge badgeText={heroContent.badgeText} />
             </div>
           </div>
 

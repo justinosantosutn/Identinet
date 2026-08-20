@@ -2,7 +2,7 @@ import { User } from "lucide-react";
 import { PageShell } from "@/components/ui/page-shell";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { SwirlCorner } from "@/components/ui/swirl-corner";
-import teamContent from "@/content/team.json";
+import { useContent } from "@/lib/content-store";
 
 const accents = ["bg-primary", "bg-accent", "bg-quaternary"];
 
@@ -15,9 +15,10 @@ interface TeamMember {
   facts: { label: string; value: string }[];
 }
 
-const team = teamContent as TeamMember[];
-
-const TeamPage = () => (
+const TeamPage = () => {
+  const { team: teamContent } = useContent();
+  const team = teamContent as TeamMember[];
+  return (
   <PageShell backTo="/#nosotros">
     <Reveal className="relative px-6 md:px-10 pt-6 pb-14 md:pb-20 overflow-hidden">
       <SwirlCorner
@@ -79,6 +80,7 @@ const TeamPage = () => (
       </RevealGroup>
     </section>
   </PageShell>
-);
+  );
+};
 
 export default TeamPage;

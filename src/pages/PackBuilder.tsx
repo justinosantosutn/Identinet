@@ -7,22 +7,13 @@ import { PageShell } from "@/components/ui/page-shell";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { whatsappUrl } from "@/lib/site";
 import { packs } from "@/data/packs";
-import extrasContent from "@/content/extras.json";
-import designContent from "@/content/design.json";
+import { useContent } from "@/lib/content-store";
 
 interface Addon {
   key: string;
   group: string;
   label: string;
 }
-
-const extraAddons: Addon[] = extrasContent.flatMap((cat) =>
-  cat.bullets.map((b, i) => ({ key: `extra-${cat.title}-${i}`, group: cat.title, label: b }))
-);
-
-const designAddons: Addon[] = designContent.flatMap((cat) =>
-  cat.bullets.map((b, i) => ({ key: `design-${cat.title}-${i}`, group: cat.title, label: b }))
-);
 
 const droneAddon: Addon = {
   key: "drone",
@@ -36,13 +27,8 @@ const resetDigitalAddon: Addon = {
   label: "Reset Digital",
 };
 
-const addonGroups: { title: string; items: Addon[] }[] = [
-  { title: "Adicionales", items: extraAddons },
-  { title: "Diseño", items: designAddons },
-  { title: "Producción y asesoría", items: [droneAddon, resetDigitalAddon] },
-];
-
 const PackBuilder = () => {
+  const { extras: extrasContent, design: designContent } = useContent();
   const [packSlug, setPackSlug] = useState<string | null>(null);
   const [selectedAddons, setSelectedAddons] = useState<Set<string>>(new Set());
 
@@ -57,9 +43,34 @@ const PackBuilder = () => {
     });
   };
 
+  const extraAddons: Addon[] = useMemo(
+    () =>
+      extrasContent.flatMap((cat) =>
+        cat.bullets.map((b, i) => ({ key: `extra-${cat.title}-${i}`, group: cat.title, label: b })),
+      ),
+    [extrasContent],
+  );
+
+  const designAddons: Addon[] = useMemo(
+    () =>
+      designContent.flatMap((cat) =>
+        cat.bullets.map((b, i) => ({ key: `design-${cat.title}-${i}`, group: cat.title, label: b })),
+      ),
+    [designContent],
+  );
+
+  const addonGroups: { title: string; items: Addon[] }[] = useMemo(
+    () => [
+      { title: "Adicionales", items: extraAddons },
+      { title: "Diseño", items: designAddons },
+      { title: "Producción y asesoría", items: [droneAddon, resetDigitalAddon] },
+    ],
+    [extraAddons, designAddons],
+  );
+
   const allAddons = useMemo(
     () => [...extraAddons, ...designAddons, droneAddon, resetDigitalAddon],
-    []
+    [extraAddons, designAddons]
   );
 
   const chosenAddons = allAddons.filter((a) => selectedAddons.has(a.key));
