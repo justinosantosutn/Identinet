@@ -67,6 +67,10 @@
   .no-scrollbar {
     scrollbar-width: none;
     -ms-overflow-style: none;
+    /* Momentum scrolling on iOS, and stop the swipe from bleeding into the
+       browser's edge-swipe back/forward gesture on iOS and Android. */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
   }
   .no-scrollbar::-webkit-scrollbar {
     display: none;

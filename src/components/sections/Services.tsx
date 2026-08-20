@@ -43,9 +43,13 @@ export const Services = () => {
         <CarouselSwipeHint />
         <div className="relative">
           <CarouselEdgeFade />
-          <RevealGroup className="flex gap-5 overflow-x-auto overflow-y-visible snap-x snap-mandatory pt-4 pb-2 -mx-6 px-6 no-scrollbar md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-8 md:overflow-visible">
+          <RevealGroup
+            disableOnMobile
+            className="flex gap-5 overflow-x-auto overflow-y-visible snap-x snap-proximity pt-4 pb-2 -mx-6 px-6 no-scrollbar md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-8 md:overflow-visible"
+          >
             {services.map(({ icon: Icon, title, description, bullets, bg, fg }) => (
               <RevealItem
+                disableOnMobile
                 key={title}
                 className={`${bg} ${fg} flex-shrink-0 w-[78%] sm:w-[55%] snap-center md:w-auto rounded-[2rem] p-8 shadow-[6px_6px_0px_rgba(36,27,34,0.15)] hover:-translate-y-1 transition-transform`}
               >

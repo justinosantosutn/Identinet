@@ -20,9 +20,12 @@ export const Explore = () => {
         <CarouselSwipeHint />
         <div className="relative">
           <CarouselEdgeFade />
-          <RevealGroup className="flex gap-5 overflow-x-auto overflow-y-visible snap-x snap-mandatory pt-4 pb-2 -mx-6 px-6 no-scrollbar md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:overflow-visible">
+          <RevealGroup
+            disableOnMobile
+            className="flex gap-5 overflow-x-auto overflow-y-visible snap-x snap-proximity pt-4 pb-2 -mx-6 px-6 no-scrollbar md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:overflow-visible"
+          >
             {destinations.map(({ icon: Icon, title, desc, to, bg, fg }) => (
-              <RevealItem key={to} className="flex-shrink-0 w-[78%] sm:w-[55%] md:w-auto snap-center">
+              <RevealItem disableOnMobile key={to} className="flex-shrink-0 w-[78%] sm:w-[55%] md:w-auto snap-center">
                 <Link
                   to={to}
                   className={`group block h-full ${bg} ${fg} rounded-[2rem] p-8 shadow-[6px_6px_0px_rgba(36,27,34,0.15)] hover:-translate-y-1 transition-transform`}
