@@ -10,8 +10,17 @@ import { hydratePacks, type Pack, type ComparisonRow } from "@/data/packs";
 import { hydrateClients, type ClientCase } from "@/data/clients";
 import { PreviewFrame } from "@/components/admin/PreviewFrame";
 import { PreviewBoundary } from "@/components/admin/PreviewBoundary";
+import { HeroCardPositioner } from "@/components/admin/HeroCardPositioner";
+import type { CardPosition } from "@/components/ui/hero";
 import { previewComponents } from "./previewComponents";
 import { getSection, sections } from "./schemas";
+
+interface FloatingCardDraft {
+  handle: string;
+  metric: string;
+  avatarSeed: string;
+  position?: { mobile?: CardPosition; desktop?: CardPosition };
+}
 
 type Status = "loading" | "ready" | "saving" | "saved" | "error";
 
@@ -222,7 +231,22 @@ const ContentEditorInner = () => {
 
       {data !== null && status !== "loading" && (
         <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_440px] gap-6 items-start">
-          <div className="bg-white border border-border rounded-2xl p-6">
+          <div>
+            {section.key === "hero" && (
+              <HeroCardPositioner
+                cards={(data as { floatingCards: FloatingCardDraft[] }).floatingCards ?? []}
+                onChange={(index, breakpoint, position) => {
+                  setData((prev: unknown) => {
+                    const draft = structuredClone(prev) as { floatingCards: FloatingCardDraft[] };
+                    const card = draft.floatingCards[index];
+                    if (!card) return prev;
+                    card.position = { ...card.position, [breakpoint]: position };
+                    return draft;
+                  });
+                }}
+              />
+            )}
+            <div className="bg-white border border-border rounded-2xl p-6">
             {section.schema.kind === "array" ? (
               <ObjectFields
                 fields={[{ key: "__root", label: section.title, kind: "array", itemLabel: section.schema.itemLabel, fields: section.schema.fields }]}
@@ -236,6 +260,7 @@ const ContentEditorInner = () => {
                 onChange={setData}
               />
             )}
+            </div>
           </div>
 
           {PreviewComponent && (

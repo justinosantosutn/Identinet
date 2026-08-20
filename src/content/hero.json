@@ -5,7 +5,17 @@
   "mobileCta": "Agendá tu llamada — es gratis",
   "badgeText": "AGENDÁ TU LLAMADA · ES GRATIS ·",
   "floatingCards": [
-    { "handle": "@marca.viva", "metric": "+40% alcance en 60 días", "avatarSeed": "Sofia" },
-    { "handle": "@estudio.cafe", "metric": "12k seguidores nuevos", "avatarSeed": "Mateo" }
+    {
+      "handle": "@marca.viva",
+      "metric": "+40% alcance en 60 días",
+      "avatarSeed": "Sofia",
+      "position": { "mobile": { "top": 8, "left": 78 }, "desktop": { "top": 12, "left": 2 } }
+    },
+    {
+      "handle": "@estudio.cafe",
+      "metric": "12k seguidores nuevos",
+      "avatarSeed": "Mateo",
+      "position": { "mobile": { "top": 68, "left": 2 }, "desktop": { "top": 2, "left": 80 } }
+    }
   ]
 }

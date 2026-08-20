@@ -1,5 +1,6 @@
 import { motion, type Variants } from "motion/react";
-import { useEffect, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
+import { useIsMobile } from "@/lib/use-is-mobile";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 28 },
@@ -16,18 +17,6 @@ interface RevealProps {
    * view (an animation designed for vertical scroll) reads as jank, not polish. */
   disableOnMobile?: boolean;
 }
-
-const useIsMobile = () => {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    const update = () => setIsMobile(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-  return isMobile;
-};
 
 /** Fades + slides a single block up into view once, on scroll. */
 export const Reveal = ({ children, className, delay = 0, id, disableOnMobile }: RevealProps) => {

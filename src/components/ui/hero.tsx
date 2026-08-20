@@ -4,6 +4,20 @@ import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/ui/brand-icons";
 import { useContent } from "@/lib/content-store";
+import { useIsMobile } from "@/lib/use-is-mobile";
+
+export interface CardPosition {
+  top: number;
+  left: number;
+}
+
+export const DEFAULT_CARD_POSITIONS: [
+  { mobile: CardPosition; desktop: CardPosition },
+  { mobile: CardPosition; desktop: CardPosition },
+] = [
+  { mobile: { top: 8, left: 78 }, desktop: { top: 12, left: 2 } },
+  { mobile: { top: 68, left: 2 }, desktop: { top: 2, left: 80 } },
+];
 
 const navLinks = [
   { label: "Packs", href: "#packs" },
@@ -73,7 +87,7 @@ interface FloatingCardProps {
   handle: string;
   metric: string;
   avatarSeed: string;
-  className?: string;
+  position: CardPosition;
   rotate: number;
   delay?: number;
 }
@@ -82,14 +96,15 @@ const FloatingCard = ({
   handle,
   metric,
   avatarSeed,
-  className,
+  position,
   rotate,
   delay = 0,
 }: FloatingCardProps) => (
   <motion.div
     animate={{ y: [0, -16, 0] }}
     transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay }}
-    className={`absolute z-30 pointer-events-auto ${className}`}
+    className="absolute z-30 pointer-events-auto"
+    style={{ top: `${position.top}%`, left: `${position.left}%` }}
   >
     <div
       className="w-24 sm:w-32 md:w-40 lg:w-52 aspect-[3/3.5] bg-white/70 backdrop-blur-md border border-white rounded-[1.25rem] md:rounded-[2rem] p-2.5 sm:p-3.5 md:p-5 flex flex-col items-center justify-center shadow-2xl hover:rotate-0 transition-transform duration-500"
@@ -112,6 +127,10 @@ const FloatingCard = ({
 
 export const Hero = () => {
   const { hero: heroContent } = useContent();
+  const isMobile = useIsMobile();
+  const breakpoint = isMobile ? "mobile" : "desktop";
+  const cardPosition = (index: 0 | 1): CardPosition =>
+    heroContent.floatingCards[index]?.position?.[breakpoint] ?? DEFAULT_CARD_POSITIONS[index][breakpoint];
   return (
     <div className="min-h-screen bg-background flex flex-col font-body selection:bg-accent selection:text-white relative overflow-hidden w-full">
       {/* Background grid */}
@@ -200,7 +219,7 @@ export const Hero = () => {
                 handle={heroContent.floatingCards[0].handle}
                 metric={heroContent.floatingCards[0].metric}
                 avatarSeed={heroContent.floatingCards[0].avatarSeed}
-                className="top-[-20%] -right-4 md:top-auto md:right-auto md:left-[2%]"
+                position={cardPosition(0)}
                 rotate={-12}
               />
             )}
@@ -209,7 +228,7 @@ export const Hero = () => {
                 handle={heroContent.floatingCards[1].handle}
                 metric={heroContent.floatingCards[1].metric}
                 avatarSeed={heroContent.floatingCards[1].avatarSeed}
-                className="bottom-[-12%] -left-4 md:bottom-auto md:left-auto md:top-[-10%] md:right-[2%]"
+                position={cardPosition(1)}
                 rotate={12}
                 delay={1}
               />
