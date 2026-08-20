@@ -1,0 +1,11 @@
+{
+  "line1": "Tu marca",
+  "line2": "Conecta",
+  "line3": "en redes",
+  "mobileCta": "Agendá tu llamada — es gratis",
+  "badgeText": "AGENDÁ TU LLAMADA · ES GRATIS ·",
+  "floatingCards": [
+    { "handle": "@marca.viva", "metric": "+40% alcance en 60 días", "avatarSeed": "Sofia" },
+    { "handle": "@estudio.cafe", "metric": "12k seguidores nuevos", "avatarSeed": "Mateo" }
+  ]
+}

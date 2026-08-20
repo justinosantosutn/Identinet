@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Community Manager",
+    "description": "Publicación de contenido e historias diarias. Generamos e interactuamos con tu comunidad en redes.",
+    "bullets": ["Publicaciones diarias", "Gestión de historias", "Interacción con la comunidad"]
+  },
+  {
+    "title": "Social Media Manager",
+    "description": "Investigación y análisis de marca, estrategia y calendario de contenido mensual.",
+    "bullets": ["Estrategia mensual", "Copys y guiones para reels", "Análisis de marca"]
+  },
+  {
+    "title": "Creative Design",
+    "description": "Diseño de piezas gráficas para redes: posteos, portadas de reel e historias programadas.",
+    "bullets": ["Piezas para posteos", "Portadas de reels", "Historias programadas"]
+  }
+]

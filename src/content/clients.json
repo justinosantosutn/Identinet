@@ -1,0 +1,50 @@
+[
+  {
+    "slug": "valentina-rios",
+    "name": "Valentina Ríos",
+    "role": "Dueña de emprendimiento gastronómico",
+    "brand": "Estudio Café",
+    "quote": "Nos dieron la claridad que necesitábamos para saber qué publicar y por qué. En dos meses duplicamos la interacción.",
+    "video": "/videos/testimonio-valentina.mp4",
+    "accent": "primary",
+    "summary": "Estudio Café llegó a nosotros sin una estrategia clara de contenido: publicaban sin calendario ni objetivos definidos. Armamos un brief a medida, un calendario mensual y una línea gráfica consistente para su feed.",
+    "pack": "Pack Impulsar",
+    "highlights": [
+      { "title": "+40% de alcance en los primeros 60 días.", "description": "", "image": "" },
+      { "title": "Interacción duplicada en publicaciones e historias.", "description": "", "image": "" },
+      { "title": "Identidad visual unificada en todo el feed.", "description": "", "image": "" }
+    ]
+  },
+  {
+    "slug": "tomas-duarte",
+    "name": "Tomás Duarte",
+    "role": "Fundador de marca de indumentaria",
+    "brand": "Boutique Luna",
+    "quote": "El pack Impulsar nos sacó un peso de encima: nosotros mostramos, ellos crean y publican todo.",
+    "video": "/videos/testimonio-tomas.mp4",
+    "accent": "accent",
+    "summary": "Boutique Luna necesitaba delegar por completo la gestión de Instagram para enfocarse en el local físico. Con el Pack Impulsar se encargaron de la estrategia, el diseño y la publicación diaria de principio a fin.",
+    "pack": "Pack Impulsar",
+    "highlights": [
+      { "title": "Publicación diaria sin intervención del equipo de la marca.", "description": "", "image": "" },
+      { "title": "Piezas gráficas consistentes para cada lanzamiento.", "description": "", "image": "" },
+      { "title": "Más tiempo del equipo dedicado a la atención en el local.", "description": "", "image": "" }
+    ]
+  },
+  {
+    "slug": "camila-ferro",
+    "name": "Camila Ferro",
+    "role": "Directora de Vivero Brote",
+    "brand": "Vivero Brote",
+    "quote": "El seguimiento de métricas nos permitió entender qué contenido realmente funcionaba y ajustar la estrategia mes a mes.",
+    "video": "/videos/testimonio-camila.mp4",
+    "accent": "quaternary",
+    "summary": "Vivero Brote buscaba profesionalizar su comunicación y entender qué tipo de contenido generaba más consultas. Sumamos gestión y performance con seguimiento mensual de métricas en Metricool.",
+    "pack": "Pack Crear + Gestión y performance",
+    "highlights": [
+      { "title": "Reportes mensuales con métricas accionables.", "description": "", "image": "" },
+      { "title": "Piezas gráficas y portadas de reels a medida.", "description": "", "image": "" },
+      { "title": "Aumento sostenido de consultas por Instagram.", "description": "", "image": "" }
+    ]
+  }
+]

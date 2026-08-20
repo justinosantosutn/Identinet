@@ -1,0 +1,58 @@
+{
+  "packs": [
+    {
+      "slug": "conectar",
+      "name": "Conectar",
+      "tagline": "Community Manager + Social Media Manager",
+      "includes": "Ideal para marcas que necesitan estrategia, publicación y conexión con su comunidad.",
+      "features": [
+        "Estrategia y calendario mensual",
+        "Copys para publicaciones",
+        "Guiones para reels",
+        "Publicación diaria (posts e historias)"
+      ],
+      "note": "Vos nos enviás el material fotográfico y audiovisual editado.",
+      "accent": "primary",
+      "highlight": false
+    },
+    {
+      "slug": "crear",
+      "name": "Crear",
+      "tagline": "Social Media Manager + Creative Design",
+      "includes": "Ideal para marcas que buscan soluciones gráficas y estratégicas.",
+      "features": [
+        "Estrategia y calendario mensual",
+        "Copys y guiones para reels",
+        "Piezas gráficas para posteos y portadas",
+        "Historias programadas"
+      ],
+      "note": "Vos te encargás de la publicación del contenido.",
+      "accent": "accent",
+      "highlight": true
+    },
+    {
+      "slug": "impulsar",
+      "name": "Impulsar",
+      "tagline": "Community + Social Media + Creative Design",
+      "includes": "Ideal para marcas que necesitan delegar por completo el manejo de Instagram.",
+      "features": [
+        "Estrategia y calendario mensual",
+        "Publicación diaria completa",
+        "Piezas gráficas y portadas",
+        "Historias programadas"
+      ],
+      "note": "Vos nos enviás el material fotográfico y audiovisual solicitado.",
+      "accent": "quaternary",
+      "highlight": false
+    }
+  ],
+  "comparison": [
+    { "label": "Estrategia y calendario mensual", "conectar": "Sí", "crear": "Sí", "impulsar": "Sí" },
+    { "label": "Copys y guiones de reels", "conectar": "Sí", "crear": "Sí", "impulsar": "Sí" },
+    { "label": "Publicación diaria", "conectar": "Sí", "crear": "No", "impulsar": "Sí" },
+    { "label": "Diseño gráfico de posteos y portadas", "conectar": "No", "crear": "Sí", "impulsar": "Sí" },
+    { "label": "Diseño de historias programadas", "conectar": "No", "crear": "Sí", "impulsar": "Sí" },
+    { "label": "Respuesta de mensajes y comentarios", "conectar": "No", "crear": "No", "impulsar": "No" },
+    { "label": "Material audiovisual", "conectar": "Lo aporta la marca", "crear": "—", "impulsar": "Lo aporta la marca" }
+  ]
+}

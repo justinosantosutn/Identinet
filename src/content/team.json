@@ -1,0 +1,35 @@
+[
+  {
+    "slug": "socia-1",
+    "name": "Nombre Apellido",
+    "role": "Rol en el equipo",
+    "photo": "",
+    "bio": "Contanos un poco sobre ella: su rol, su estilo de trabajo y qué aporta al equipo.",
+    "facts": [
+      { "label": "Especialidad", "value": "" },
+      { "label": "Instagram", "value": "" }
+    ]
+  },
+  {
+    "slug": "socia-2",
+    "name": "Nombre Apellido",
+    "role": "Rol en el equipo",
+    "photo": "",
+    "bio": "Contanos un poco sobre ella: su rol, su estilo de trabajo y qué aporta al equipo.",
+    "facts": [
+      { "label": "Especialidad", "value": "" },
+      { "label": "Instagram", "value": "" }
+    ]
+  },
+  {
+    "slug": "socia-3",
+    "name": "Nombre Apellido",
+    "role": "Rol en el equipo",
+    "photo": "",
+    "bio": "Contanos un poco sobre ella: su rol, su estilo de trabajo y qué aporta al equipo.",
+    "facts": [
+      { "label": "Especialidad", "value": "" },
+      { "label": "Instagram", "value": "" }
+    ]
+  }
+]

@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #e8489c;
+  --color-primary-dark: #c6337e;
+  --color-primary-light: #f6a8ce;
+  --color-on-primary: #ffffff;
+
+  --color-accent: #f2824e;
+  --color-accent-dark: #d9622f;
+  --color-on-accent: #ffffff;
+
+  --color-tertiary: #a9d4c4;
+  --color-tertiary-dark: #7eb8a3;
+  --color-on-tertiary: #1f2a26;
+
+  --color-quaternary: #c3afd6;
+  --color-quaternary-dark: #a88fc2;
+  --color-on-quaternary: #ffffff;
+
+  --color-background: #c9e9dd;
+  --color-background-soft: #daf0e7;
+  --color-surface: #ffffff;
+  --color-surface-alt: #fbf7f5;
+  --color-on-surface: #241b22;
+  --color-on-surface-muted: #55665f;
+  --color-border: #b3ddce;
+
+  --color-error: #e0475a;
+
+  --font-display: "Bagel Fat One", cursive;
+  --font-body: "Quicksand", sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 999px;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-weight: 500;
+    color: var(--color-on-surface);
+    background: var(--color-background);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .text-shadow-ink {
+    text-shadow:
+      1px 1px 0 rgba(0, 0, 0, 0.12),
+      2px 2px 0 rgba(0, 0, 0, 0.12),
+      3px 3px 0 rgba(0, 0, 0, 0.12),
+      4px 4px 0 rgba(0, 0, 0, 0.12);
+  }
+}

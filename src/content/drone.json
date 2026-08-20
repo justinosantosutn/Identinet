@@ -1,0 +1,48 @@
+{
+  "beneficios": [
+    "Mayor impacto visual y diferenciación.",
+    "Incremento del alcance y la interacción en redes sociales.",
+    "Imagen de marca más innovadora y profesional.",
+    "Contenido versátil para reels, spots, campañas y sitios web."
+  ],
+  "servicios": [
+    {
+      "title": "Producción de contenido para redes sociales",
+      "desc": "Videos cortos, reels, clips promocionales y material visual optimizado para Instagram, TikTok, YouTube o Facebook."
+    },
+    {
+      "title": "Cobertura de eventos y lanzamientos",
+      "desc": "Captura aérea de los momentos clave, con dinamismo y amplitud visual."
+    },
+    {
+      "title": "Promoción de productos, servicios o espacios",
+      "desc": "Ideal para hoteles, restaurantes, deportes, turismo, y bienes y servicios."
+    }
+  ],
+  "cotizacion": [
+    {
+      "modalidad": "Contenido con drone",
+      "criterio": "Valor por hora de vuelo, más un adicional según la dificultad del proyecto (espacios que exponen al drone a accidentes)."
+    },
+    {
+      "modalidad": "Drone + contenido con celular",
+      "criterio": "Valor por 1 pieza audiovisual, con jornada de grabación de 1 hora. El tiempo extra tiene un costo adicional."
+    },
+    {
+      "modalidad": "Edición de video",
+      "criterio": "Según el pack de edición elegido."
+    }
+  ],
+  "packsEdicion": [
+    { "name": "Pack Inicial", "desc": "Contenido visual con drone + edición de 1 pieza visual + música." },
+    { "name": "Pack Extra", "desc": "Contenido visual con drone + edición de 1 pieza visual + texto + música." },
+    { "name": "Pack Plus", "desc": "Contenido visual con drone + edición de 1 pieza visual + texto + voz en off + música." }
+  ],
+  "herramientas": [
+    "Drone: DJI Air 3S",
+    "Celular: iPhone 16 Pro",
+    "Edición: CapCut Pro",
+    "Extras: micrófono JBL y trípode"
+  ],
+  "creditoInstagram": "nicopcasanova"
+}
