@@ -1,53 +1,55 @@
 import { useRef, useState } from "react";
 import { Monitor, Smartphone } from "lucide-react";
-import { DEFAULT_CARD_POSITIONS, type CardPosition } from "@/components/ui/hero";
+import type { CardPosition } from "@/components/ui/hero";
 
-interface FloatingCardDraft {
-  handle: string;
-  metric: string;
-  avatarSeed: string;
+export interface PositionerItem {
+  id: string;
+  label: string;
+  sublabel?: string;
   position?: { mobile?: CardPosition; desktop?: CardPosition };
+  defaultPosition: { mobile: CardPosition; desktop: CardPosition };
+  accent?: string;
 }
 
 interface HeroCardPositionerProps {
-  cards: FloatingCardDraft[];
-  onChange: (index: number, breakpoint: "mobile" | "desktop", position: CardPosition) => void;
+  items: PositionerItem[];
+  onChange: (id: string, breakpoint: "mobile" | "desktop", position: CardPosition) => void;
 }
 
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 
-export const HeroCardPositioner = ({ cards, onChange }: HeroCardPositionerProps) => {
+export const HeroCardPositioner = ({ items, onChange }: HeroCardPositionerProps) => {
   const [breakpoint, setBreakpoint] = useState<"mobile" | "desktop">("desktop");
   const areaRef = useRef<HTMLDivElement>(null);
-  const dragIndex = useRef<number | null>(null);
+  const dragId = useRef<string | null>(null);
 
-  const positionFor = (index: number): CardPosition =>
-    cards[index]?.position?.[breakpoint] ?? DEFAULT_CARD_POSITIONS[index as 0 | 1][breakpoint];
+  const positionFor = (item: PositionerItem): CardPosition =>
+    item.position?.[breakpoint] ?? item.defaultPosition[breakpoint];
 
   const updateFromPointer = (clientX: number, clientY: number) => {
-    const index = dragIndex.current;
+    const id = dragId.current;
     const area = areaRef.current;
-    if (index === null || !area) return;
+    if (!id || !area) return;
     const rect = area.getBoundingClientRect();
     const left = clamp(((clientX - rect.left) / rect.width) * 100, 0, 92);
     const top = clamp(((clientY - rect.top) / rect.height) * 100, 0, 88);
-    onChange(index, breakpoint, { top: Math.round(top), left: Math.round(left) });
+    onChange(id, breakpoint, { top: Math.round(top), left: Math.round(left) });
   };
 
-  const handlePointerDown = (index: number) => (e: React.PointerEvent) => {
+  const handlePointerDown = (id: string) => (e: React.PointerEvent) => {
     e.preventDefault();
-    dragIndex.current = index;
+    dragId.current = id;
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
     updateFromPointer(e.clientX, e.clientY);
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (dragIndex.current === null) return;
+    if (!dragId.current) return;
     updateFromPointer(e.clientX, e.clientY);
   };
 
   const handlePointerUp = () => {
-    dragIndex.current = null;
+    dragId.current = null;
   };
 
   return (
@@ -55,9 +57,9 @@ export const HeroCardPositioner = ({ cards, onChange }: HeroCardPositionerProps)
       <div className="flex items-center justify-between mb-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-wide text-on-surface-muted mb-1">
-            Posición de las tarjetas flotantes
+            Posición de los elementos flotantes
           </p>
-          <p className="text-xs text-on-surface-muted">Arrastralas donde quieras — mobile y desktop se guardan por separado.</p>
+          <p className="text-xs text-on-surface-muted">Arrastralos donde quieras — mobile y desktop se guardan por separado.</p>
         </div>
         <div className="flex-shrink-0 flex bg-surface-alt rounded-full p-1">
           <button
@@ -95,17 +97,19 @@ export const HeroCardPositioner = ({ cards, onChange }: HeroCardPositionerProps)
           <p className="font-display text-primary/25 text-2xl uppercase text-center px-6">Tu marca conecta en redes</p>
         </div>
 
-        {cards.map((card, i) => {
-          const pos = positionFor(i);
+        {items.map((item) => {
+          const pos = positionFor(item);
           return (
             <div
-              key={i}
-              onPointerDown={handlePointerDown(i)}
+              key={item.id}
+              onPointerDown={handlePointerDown(item.id)}
               style={{ top: `${pos.top}%`, left: `${pos.left}%` }}
-              className="absolute w-20 cursor-grab active:cursor-grabbing bg-white/90 border border-white shadow-lg rounded-xl p-2 text-center"
+              className={`absolute w-20 cursor-grab active:cursor-grabbing shadow-lg rounded-xl p-2 text-center ${
+                item.accent ?? "bg-white/90 border border-white"
+              }`}
             >
-              <p className="text-[9px] font-bold text-primary leading-tight truncate">{card.handle || `Tarjeta ${i + 1}`}</p>
-              <p className="text-[8px] text-on-surface-muted leading-tight truncate">{card.metric}</p>
+              <p className="text-[9px] font-bold leading-tight truncate">{item.label}</p>
+              {item.sublabel && <p className="text-[8px] opacity-80 leading-tight truncate">{item.sublabel}</p>}
             </div>
           );
         })}

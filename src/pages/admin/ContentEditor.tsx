@@ -4,14 +4,12 @@ import { Check, ChevronDown, ExternalLink, Loader2, RotateCcw, Save } from "luci
 import { ObjectFields } from "@/components/admin/ObjectFields";
 import { getAdminPasscode } from "@/lib/admin-auth";
 import { setAdminDirty, confirmLeaveIfDirty } from "@/lib/admin-dirty";
-import { ContentOverride } from "@/lib/content-store";
 import { hydrateSite, type SiteConfig } from "@/lib/site";
 import { hydratePacks, type Pack, type ComparisonRow } from "@/data/packs";
 import { hydrateClients, type ClientCase } from "@/data/clients";
-import { PreviewFrame } from "@/components/admin/PreviewFrame";
-import { PreviewBoundary } from "@/components/admin/PreviewBoundary";
+import { LivePreview } from "@/components/admin/LivePreview";
 import { HeroCardPositioner } from "@/components/admin/HeroCardPositioner";
-import type { CardPosition } from "@/components/ui/hero";
+import { DEFAULT_CARD_POSITIONS, DEFAULT_BADGE_POSITION, type CardPosition } from "@/components/ui/hero";
 import { previewComponents } from "./previewComponents";
 import { getSection, sections } from "./schemas";
 
@@ -20,6 +18,11 @@ interface FloatingCardDraft {
   metric: string;
   avatarSeed: string;
   position?: { mobile?: CardPosition; desktop?: CardPosition };
+}
+
+interface HeroDraft {
+  floatingCards: FloatingCardDraft[];
+  badgePosition?: { mobile?: CardPosition; desktop?: CardPosition };
 }
 
 type Status = "loading" | "ready" | "saving" | "saved" | "error";
@@ -241,20 +244,43 @@ const ContentEditorInner = () => {
       {data !== null && status !== "loading" && (
         <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_440px] gap-6 items-start">
           <div>
-            {section.key === "hero" && (
-              <HeroCardPositioner
-                cards={(data as { floatingCards: FloatingCardDraft[] }).floatingCards ?? []}
-                onChange={(index, breakpoint, position) => {
-                  setData((prev: unknown) => {
-                    const draft = structuredClone(prev) as { floatingCards: FloatingCardDraft[] };
-                    const card = draft.floatingCards[index];
-                    if (!card) return prev;
-                    card.position = { ...card.position, [breakpoint]: position };
-                    return draft;
-                  });
-                }}
-              />
-            )}
+            {section.key === "hero" && (() => {
+              const hero = data as HeroDraft;
+              return (
+                <HeroCardPositioner
+                  items={[
+                    ...(hero.floatingCards ?? []).map((card, i) => ({
+                      id: `card-${i}`,
+                      label: card.handle || `Tarjeta ${i + 1}`,
+                      sublabel: card.metric,
+                      position: card.position,
+                      defaultPosition: DEFAULT_CARD_POSITIONS[i as 0 | 1],
+                    })),
+                    {
+                      id: "cta",
+                      label: "Agendá tu llamada",
+                      position: hero.badgePosition,
+                      defaultPosition: DEFAULT_BADGE_POSITION,
+                      accent: "bg-accent text-white",
+                    },
+                  ]}
+                  onChange={(id, breakpoint, position) => {
+                    setData((prev: unknown) => {
+                      const draft = structuredClone(prev) as HeroDraft;
+                      if (id === "cta") {
+                        draft.badgePosition = { ...draft.badgePosition, [breakpoint]: position };
+                        return draft;
+                      }
+                      const index = Number(id.replace("card-", ""));
+                      const card = draft.floatingCards[index];
+                      if (!card) return prev;
+                      card.position = { ...card.position, [breakpoint]: position };
+                      return draft;
+                    });
+                  }}
+                />
+              );
+            })()}
             <div className="bg-white border border-border rounded-2xl p-6">
             {section.schema.kind === "array" ? (
               <ObjectFields
@@ -274,16 +300,7 @@ const ContentEditorInner = () => {
 
           {PreviewComponent && (
             <div className="xl:sticky xl:top-6">
-              <p className="text-xs font-bold uppercase tracking-wide text-on-surface-muted mb-3">
-                Preview — así quedaría
-              </p>
-              <PreviewBoundary key={JSON.stringify(data)}>
-                <PreviewFrame>
-                  <ContentOverride overrides={{ [section.key]: data } as never}>
-                    <PreviewComponent />
-                  </ContentOverride>
-                </PreviewFrame>
-              </PreviewBoundary>
+              <LivePreview sectionKey={section.key} data={data} PreviewComponent={PreviewComponent} />
             </div>
           )}
         </div>

@@ -4,6 +4,7 @@
   "line3": "en redes",
   "mobileCta": "Agendá tu llamada — es gratis",
   "badgeText": "AGENDÁ TU LLAMADA · ES GRATIS ·",
+  "badgePosition": { "mobile": { "top": 82, "left": 68 }, "desktop": { "top": 68, "left": 88 } },
   "floatingCards": [
     {
       "handle": "@marca.viva",

@@ -13,6 +13,7 @@ import NotFound from "@/pages/NotFound";
 import AdminLayout from "@/pages/admin/AdminLayout";
 import AdminHome from "@/pages/admin/AdminHome";
 import ContentEditor from "@/pages/admin/ContentEditor";
+import PreviewFrameRoute from "@/pages/admin/PreviewFrameRoute";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
       <Route path="/drone" element={<DronePage />} />
       <Route path="/gift-card" element={<GiftCardPage />} />
       <Route path="/equipo" element={<TeamPage />} />
+      <Route path="/admin/frame/:key" element={<PreviewFrameRoute />} />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminHome />} />
         <Route path=":key" element={<ContentEditor />} />

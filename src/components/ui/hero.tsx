@@ -19,6 +19,11 @@ export const DEFAULT_CARD_POSITIONS: [
   { mobile: { top: 68, left: 2 }, desktop: { top: 2, left: 80 } },
 ];
 
+export const DEFAULT_BADGE_POSITION: { mobile: CardPosition; desktop: CardPosition } = {
+  mobile: { top: 82, left: 68 },
+  desktop: { top: 68, left: 88 },
+};
+
 const navLinks = [
   { label: "Packs", href: "#packs" },
   { label: "Adicionales", to: "/adicionales" },
@@ -131,6 +136,8 @@ export const Hero = () => {
   const breakpoint = isMobile ? "mobile" : "desktop";
   const cardPosition = (index: 0 | 1): CardPosition =>
     heroContent.floatingCards[index]?.position?.[breakpoint] ?? DEFAULT_CARD_POSITIONS[index][breakpoint];
+  const badgePosition: CardPosition =
+    heroContent.badgePosition?.[breakpoint] ?? DEFAULT_BADGE_POSITION[breakpoint];
   return (
     <div className="min-h-screen bg-background flex flex-col font-body selection:bg-accent selection:text-white relative overflow-hidden w-full">
       {/* Background grid */}
@@ -241,21 +248,20 @@ export const Hero = () => {
               <ArrowAccentRight />
             </div>
 
+            {/* "Book a call" badge — lives inside the hero only, positioned
+                the same way as the floating cards; it never follows scroll. */}
+            <a
+              href="#contacto"
+              aria-label="Ir a contacto"
+              className="absolute z-30 pointer-events-auto"
+              style={{ top: `${badgePosition.top}%`, left: `${badgePosition.left}%` }}
+            >
+              <CircularBadge badgeText={heroContent.badgeText} />
+            </a>
           </div>
 
         </div>
       </main>
-
-      {/* Floating "book a call" badge — fixed on every breakpoint so it's a
-          direct, always-reachable link to #contacto, not just a decorative
-          hero element. */}
-      <a
-        href="#contacto"
-        aria-label="Ir a contacto"
-        className="fixed bottom-6 right-6 z-40"
-      >
-        <CircularBadge badgeText={heroContent.badgeText} />
-      </a>
     </div>
   );
 };
