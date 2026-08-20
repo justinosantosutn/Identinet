@@ -152,8 +152,6 @@ interface HeroProps {
   onPositionChange?: (id: FloatingItemId, breakpoint: "mobile" | "desktop", position: CardPosition) => void;
 }
 
-const clampPercent = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
-
 export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps = {}) => {
   const { hero: heroContent } = useContent();
   const isMobile = useIsMobile();
@@ -171,8 +169,10 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
     const rect = area.getBoundingClientRect();
     const x = clientX - dragOffset.current.x;
     const y = clientY - dragOffset.current.y;
-    const left = clampPercent(((x - rect.left) / rect.width) * 100, 0, 92);
-    const top = clampPercent(((y - rect.top) / rect.height) * 100, 0, 88);
+    // No clamp — fully free placement, including overlapping the navbar
+    // above or spilling past the edge of the hero.
+    const left = ((x - rect.left) / rect.width) * 100;
+    const top = ((y - rect.top) / rect.height) * 100;
     onPositionChange(id, breakpoint, { top: Math.round(top), left: Math.round(left) });
   };
 

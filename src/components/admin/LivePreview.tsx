@@ -10,6 +10,8 @@ interface LivePreviewProps {
 }
 
 const WIDTH: Record<"mobile" | "desktop", number> = { mobile: 375, desktop: 1280 };
+const STATUS_BAR_H = 44;
+const HOME_INDICATOR_H = 24;
 const ORIGIN = window.location.origin;
 
 /** Both modes render inside a real <iframe> — a genuine independent
@@ -31,6 +33,8 @@ export const LivePreview = ({ sectionKey, data, PreviewComponent: _unused, onHer
   const [scale, setScale] = useState(1);
 
   const targetWidth = WIDTH[mode];
+  const chromeHeight = mode === "mobile" ? STATUS_BAR_H + HOME_INDICATOR_H : 0;
+  const frameHeight = iframeHeight + chromeHeight;
 
   useEffect(() => {
     const handleMessage = (e: MessageEvent) => {
@@ -77,6 +81,20 @@ export const LivePreview = ({ sectionKey, data, PreviewComponent: _unused, onHer
     setMode(next);
   };
 
+  const iframeEl = (
+    <iframe
+      key={`${sectionKey}-${mode}`}
+      ref={iframeRef}
+      src={`/admin/frame/${sectionKey}`}
+      title={`Preview ${mode}`}
+      style={{ width: targetWidth, height: iframeHeight, border: 0, display: "block" }}
+      onLoad={() => {
+        // In case the ready handshake fired before this listener existed.
+        iframeRef.current?.contentWindow?.postMessage({ type: "identinet-preview-data", data }, ORIGIN);
+      }}
+    />
+  );
+
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
@@ -97,27 +115,37 @@ export const LivePreview = ({ sectionKey, data, PreviewComponent: _unused, onHer
 
       <div
         ref={containerRef}
-        className="rounded-2xl border border-border overflow-hidden bg-background mx-auto max-w-full"
-        style={{ width: targetWidth * scale, height: iframeHeight * scale }}
+        className="mx-auto max-w-full"
+        style={{ width: targetWidth * scale, height: frameHeight * scale }}
       >
-        <iframe
-          key={`${sectionKey}-${mode}`}
-          ref={iframeRef}
-          src={`/admin/frame/${sectionKey}`}
-          title={`Preview ${mode}`}
-          style={{
-            width: targetWidth,
-            height: iframeHeight,
-            border: 0,
-            display: "block",
-            transform: `scale(${scale})`,
-            transformOrigin: "top left",
-          }}
-          onLoad={() => {
-            // In case the ready handshake fired before this listener existed.
-            iframeRef.current?.contentWindow?.postMessage({ type: "identinet-preview-data", data }, ORIGIN);
-          }}
-        />
+        <div style={{ width: targetWidth, transform: `scale(${scale})`, transformOrigin: "top left" }}>
+          {mode === "mobile" ? (
+            <div className="bg-black rounded-[2.5rem] p-2.5 shadow-2xl">
+              <div className="rounded-[2rem] overflow-hidden bg-white relative">
+                {/* Safari full-screen status bar — no address bar, matching
+                    how Safari looks once the page has scrolled/settled. */}
+                <div
+                  className="flex items-end justify-between px-7 pb-1.5 text-black font-semibold text-[13px] relative z-10"
+                  style={{ height: STATUS_BAR_H }}
+                >
+                  <span>9:41</span>
+                  <div className="absolute left-1/2 top-1.5 -translate-x-1/2 w-[100px] h-[26px] bg-black rounded-full" />
+                  <span className="flex items-center gap-1">
+                    <span>📶</span>
+                    <span>🔋</span>
+                  </span>
+                </div>
+                {iframeEl}
+                {/* Home indicator */}
+                <div className="flex items-center justify-center" style={{ height: HOME_INDICATOR_H }}>
+                  <div className="w-32 h-1.5 bg-black rounded-full" />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-border overflow-hidden bg-background">{iframeEl}</div>
+          )}
+        </div>
       </div>
     </div>
   );
