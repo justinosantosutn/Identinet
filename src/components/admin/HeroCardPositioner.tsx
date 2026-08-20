@@ -90,7 +90,7 @@ export const HeroCardPositioner = ({ items, onChange }: HeroCardPositionerProps)
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         className={`relative w-full bg-background rounded-xl border border-border overflow-hidden select-none touch-none ${
-          breakpoint === "mobile" ? "max-w-[280px] aspect-[9/16] mx-auto" : "aspect-[16/9]"
+          breakpoint === "mobile" ? "max-w-[375px] aspect-[375/812] mx-auto" : "aspect-[1280/800]"
         }`}
       >
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
