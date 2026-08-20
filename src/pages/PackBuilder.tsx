@@ -9,7 +9,6 @@ import { whatsappUrl } from "@/lib/site";
 import { packs } from "@/data/packs";
 import extrasContent from "@/content/extras.json";
 import designContent from "@/content/design.json";
-import droneContent from "@/content/drone.json";
 
 interface Addon {
   key: string;
