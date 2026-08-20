@@ -39,7 +39,7 @@ export const sections: SectionConfig[] = [
           fields: [
             { key: "handle", label: "Usuario / marca", kind: "text" },
             { key: "metric", label: "Métrica", kind: "text" },
-            { key: "avatarSeed", label: "Semilla del avatar (cualquier palabra)", kind: "text" },
+            { key: "photo", label: "Foto (si la dejás vacía, se usa un avatar de ejemplo)", kind: "media", accept: "image" },
           ],
         },
       ],

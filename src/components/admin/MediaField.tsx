@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
-import { Upload } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import { upload } from "@vercel/blob/client";
 import { getAdminPasscode } from "@/lib/admin-auth";
+import { deleteBlobIfOwned } from "@/lib/media-cleanup";
 
 interface MediaFieldProps {
   label: string;
@@ -32,6 +33,7 @@ export const MediaField = ({ label, value, accept, onChange }: MediaFieldProps) 
         onUploadProgress: ({ percentage }) => setProgress(Math.round(percentage)),
       });
       setProgress(null);
+      if (value && value !== blob.url) deleteBlobIfOwned(value);
       onChange(blob.url);
     } catch (err) {
       setProgress(null);
@@ -83,14 +85,29 @@ export const MediaField = ({ label, value, accept, onChange }: MediaFieldProps) 
               </div>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => inputRef.current?.click()}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
-            >
-              <Upload className="w-3.5 h-3.5" />
-              Subir {accept === "image" ? "imagen" : "video"}
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => inputRef.current?.click()}
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
+              >
+                <Upload className="w-3.5 h-3.5" />
+                Subir {accept === "image" ? "imagen" : "video"}
+              </button>
+              {value && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    deleteBlobIfOwned(value);
+                    onChange("");
+                  }}
+                  className="inline-flex items-center gap-1 text-xs font-bold text-on-surface-muted hover:text-error"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  Quitar
+                </button>
+              )}
+            </div>
           )}
 
           <input

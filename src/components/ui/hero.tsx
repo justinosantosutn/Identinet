@@ -98,7 +98,7 @@ const CircularBadge = ({ badgeText, draggable = false }: { badgeText: string; dr
 interface FloatingCardProps {
   handle: string;
   metric: string;
-  avatarSeed: string;
+  photo?: string;
   position: CardPosition;
   rotate: number;
   delay?: number;
@@ -109,7 +109,7 @@ interface FloatingCardProps {
 const FloatingCard = ({
   handle,
   metric,
-  avatarSeed,
+  photo,
   position,
   rotate,
   delay = 0,
@@ -131,7 +131,7 @@ const FloatingCard = ({
     >
       <div className="w-9 h-9 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-24 lg:h-24 bg-white rounded-full flex items-center justify-center mb-1.5 sm:mb-2.5 md:mb-4 shadow-inner border-2 md:border-[3px] border-primary-light overflow-hidden">
         <img
-          src={`https://api.dicebear.com/7.x/notionists/svg?seed=${avatarSeed}&backgroundColor=ffffff`}
+          src={photo || `https://api.dicebear.com/7.x/notionists/svg?seed=${handle}&backgroundColor=ffffff`}
           alt={handle}
           className="w-full h-full object-cover"
         />
@@ -289,7 +289,7 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
               <FloatingCard
                 handle={heroContent.floatingCards[0].handle}
                 metric={heroContent.floatingCards[0].metric}
-                avatarSeed={heroContent.floatingCards[0].avatarSeed}
+                photo={heroContent.floatingCards[0].photo}
                 position={cardPosition(0)}
                 rotate={-12}
                 draggable={editablePositions}
@@ -300,7 +300,7 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
               <FloatingCard
                 handle={heroContent.floatingCards[1].handle}
                 metric={heroContent.floatingCards[1].metric}
-                avatarSeed={heroContent.floatingCards[1].avatarSeed}
+                photo={heroContent.floatingCards[1].photo}
                 position={cardPosition(1)}
                 rotate={12}
                 delay={1}

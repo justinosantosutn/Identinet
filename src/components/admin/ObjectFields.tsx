@@ -3,6 +3,7 @@ import type { FieldSchema } from "./types";
 import { ListField } from "./ListField";
 import { MediaField } from "./MediaField";
 import { ConfirmDeleteButton } from "./ConfirmDeleteButton";
+import { deleteBlobsDeep } from "@/lib/media-cleanup";
 
 interface ObjectFieldsProps {
   fields: FieldSchema[];
@@ -162,7 +163,10 @@ export const ObjectFields = ({ fields, value, onChange }: ObjectFieldsProps) => 
                           <ChevronDown className="w-3.5 h-3.5" />
                         </button>
                         <ConfirmDeleteButton
-                          onConfirm={() => set(field.key, items.filter((_, idx) => idx !== i))}
+                          onConfirm={() => {
+                            deleteBlobsDeep(items[i]);
+                            set(field.key, items.filter((_, idx) => idx !== i));
+                          }}
                         />
                       </div>
                     </div>
