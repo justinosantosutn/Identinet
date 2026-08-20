@@ -160,14 +160,19 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
   const breakpoint = isMobile ? "mobile" : "desktop";
   const floatingAreaRef = useRef<HTMLDivElement>(null);
   const dragId = useRef<FloatingItemId | null>(null);
+  // Where within the element you grabbed it, so it follows your cursor
+  // instead of snapping its top-left corner to wherever you clicked.
+  const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const updateFromPointer = (clientX: number, clientY: number) => {
     const id = dragId.current;
     const area = floatingAreaRef.current;
     if (!id || !area || !onPositionChange) return;
     const rect = area.getBoundingClientRect();
-    const left = clampPercent(((clientX - rect.left) / rect.width) * 100, 0, 92);
-    const top = clampPercent(((clientY - rect.top) / rect.height) * 100, 0, 88);
+    const x = clientX - dragOffset.current.x;
+    const y = clientY - dragOffset.current.y;
+    const left = clampPercent(((x - rect.left) / rect.width) * 100, 0, 92);
+    const top = clampPercent(((y - rect.top) / rect.height) * 100, 0, 88);
     onPositionChange(id, breakpoint, { top: Math.round(top), left: Math.round(left) });
   };
 
@@ -175,6 +180,8 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
     if (!editablePositions) return;
     e.preventDefault();
     dragId.current = id;
+    const targetRect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    dragOffset.current = { x: e.clientX - targetRect.left, y: e.clientY - targetRect.top };
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     updateFromPointer(e.clientX, e.clientY);
   };
