@@ -14,6 +14,7 @@ const routeTabs = [{ label: "Armá tu pack", to: "/armar-pack" }];
 const trailingAnchorTabs = [
   { label: "Nosotras", href: "#nosotros" },
   { label: "FAQ", href: "#faq" },
+  { label: "Contacto", href: "#contacto" },
 ];
 
 export const QuickNav = () => {

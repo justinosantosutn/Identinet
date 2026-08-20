@@ -44,7 +44,7 @@ export const Services = () => {
         <div className="relative">
           <RevealGroup
             disableOnMobile
-            className="flex gap-5 overflow-x-auto overflow-y-visible snap-x snap-proximity pt-4 pb-2 -mx-6 px-6 no-scrollbar md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-8 md:overflow-visible"
+            className="flex gap-5 overflow-x-auto overflow-y-visible snap-x snap-proximity pt-4 pb-2 -mx-6 px-6 no-scrollbar [mask-image:linear-gradient(to_right,black_88%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,black_88%,transparent_100%)] md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-8 md:overflow-visible md:[mask-image:none] md:[-webkit-mask-image:none]"
           >
             {services.map(({ icon: Icon, title, description, bullets, bg, fg }) => (
               <RevealItem
@@ -70,7 +70,7 @@ export const Services = () => {
           </RevealGroup>
         </div>
 
-        <p className="text-center text-on-surface-muted text-sm mt-10">
+        <p className="text-center text-on-surface-muted text-sm mt-6 md:mt-10">
           Aclaración: estos servicios se encuentran dentro de nuestros packs.
         </p>
       </div>

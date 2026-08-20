@@ -27,7 +27,7 @@ export const ResetDigital = () => {
           </p>
         </Reveal>
 
-        <RevealGroup className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-14">
+        <RevealGroup className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-9 md:mb-14">
           <RevealItem className="bg-surface-alt border border-border rounded-[2rem] p-8">
             <h3 className="font-display text-2xl text-primary mb-5">¿Qué incluye?</h3>
             <ul className="space-y-3">
@@ -53,7 +53,7 @@ export const ResetDigital = () => {
           </RevealItem>
         </RevealGroup>
 
-        <Reveal className="bg-white border border-border rounded-[2rem] p-8 md:p-10 mb-10">
+        <Reveal className="bg-white border border-border rounded-[2rem] p-8 md:p-10 mb-6 md:mb-10">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-11 h-11 bg-accent/15 rounded-2xl flex items-center justify-center flex-shrink-0">
               <ClipboardList className="w-5 h-5 text-accent" />

@@ -58,7 +58,7 @@ export const DesignCatalog = () => {
           ))}
         </RevealGroup>
 
-        <p className="text-center text-on-surface-muted text-sm mt-10">
+        <p className="text-center text-on-surface-muted text-sm mt-6 md:mt-10">
           Aclaración: todo se entrega de manera digital, en formato PDF, PNG o JPG, listo para
           utilizar o imprimir.
         </p>

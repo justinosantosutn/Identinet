@@ -26,7 +26,7 @@ export const Packs = () => {
         <div className="relative">
           <RevealGroup
             disableOnMobile
-            className="flex gap-5 overflow-x-auto overflow-y-visible snap-x snap-proximity pt-6 pb-2 -mx-6 px-6 no-scrollbar md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-8 md:overflow-visible md:pt-0"
+            className="flex gap-5 overflow-x-auto overflow-y-visible snap-x snap-proximity pt-6 pb-2 -mx-6 px-6 no-scrollbar [mask-image:linear-gradient(to_right,black_88%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,black_88%,transparent_100%)] md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-8 md:overflow-visible md:pt-0 md:[mask-image:none] md:[-webkit-mask-image:none]"
           >
           {packs.map((pack) => (
             <RevealItem
@@ -97,7 +97,7 @@ export const Packs = () => {
           </RevealGroup>
         </div>
 
-        <p className="text-center text-on-surface-muted text-sm mt-10">
+        <p className="text-center text-on-surface-muted text-sm mt-6 md:mt-10">
           ¿Ninguno se ajusta del todo?{" "}
           <Link to="/armar-pack" className="text-primary font-bold underline underline-offset-2">
             Armá tu propio pack
@@ -105,8 +105,8 @@ export const Packs = () => {
           combinando servicios individuales + adicionales.
         </p>
 
-        <Reveal className="mt-20">
-          <h3 className="text-center font-display text-3xl md:text-4xl text-primary mb-10">
+        <Reveal className="mt-12 md:mt-20">
+          <h3 className="text-center font-display text-3xl md:text-4xl text-primary mb-6 md:mb-10">
             Comparativa de packs
           </h3>
 

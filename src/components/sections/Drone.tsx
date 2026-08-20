@@ -24,7 +24,7 @@ export const Drone = () => {
           </p>
         </Reveal>
 
-        <Reveal className="bg-accent text-white rounded-[2rem] p-8 md:p-10 mb-10">
+        <Reveal className="bg-accent text-white rounded-[2rem] p-8 md:p-10 mb-6 md:mb-10">
           <div className="flex items-center gap-3 mb-6">
             <Wind className="w-6 h-6" />
             <h3 className="font-display text-2xl">Beneficios principales</h3>
@@ -42,7 +42,7 @@ export const Drone = () => {
         <Reveal>
           <h3 className="font-display text-2xl text-primary mb-6">Servicios</h3>
         </Reveal>
-        <RevealGroup className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
+        <RevealGroup className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-9 md:mb-14">
           {servicios.map((s) => (
             <RevealItem key={s.title} className="bg-surface-alt border border-border rounded-[1.75rem] p-6">
               <h4 className="font-bold text-on-surface mb-2 leading-snug">{s.title}</h4>
@@ -54,7 +54,7 @@ export const Drone = () => {
         <Reveal>
           <h3 className="font-display text-2xl text-primary mb-6">¿Cómo cotizamos tu proyecto?</h3>
         </Reveal>
-        <Reveal className="overflow-x-auto mb-14 rounded-[1.75rem] border border-border">
+        <Reveal className="overflow-x-auto mb-9 md:mb-14 rounded-[1.75rem] border border-border">
           <table className="w-full text-sm bg-white">
             <thead>
               <tr className="bg-primary text-white text-left">
@@ -86,7 +86,7 @@ export const Drone = () => {
             </RevealItem>
           ))}
         </RevealGroup>
-        <p className="text-center text-on-surface-muted text-sm mb-14">
+        <p className="text-center text-on-surface-muted text-sm mb-9 md:mb-14">
           Presupuesto: hora de grabación + adicional del pack.
         </p>
 

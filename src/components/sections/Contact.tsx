@@ -21,7 +21,7 @@ export const Contact = () => {
         <h2 className="font-display text-4xl md:text-6xl text-white leading-[1.05] mb-6">
           Hablemos de tu marca
         </h2>
-        <p className="text-white/85 text-base md:text-lg mb-10 max-w-xl mx-auto">
+        <p className="text-white/85 text-base md:text-lg mb-6 md:mb-10 max-w-xl mx-auto">
           Por cualquier duda nos encontramos a disposición. Consultanos el
           valor de tu pack o servicio por WhatsApp.
         </p>

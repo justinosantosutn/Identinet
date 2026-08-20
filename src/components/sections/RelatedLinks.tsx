@@ -14,7 +14,7 @@ export const RelatedLinks = ({ exclude }: RelatedLinksProps) => {
   return (
     <section className="bg-background px-6 md:px-10 py-16 md:py-20 border-t border-border">
       <div className="max-w-5xl mx-auto">
-        <h2 className="text-center font-display text-2xl md:text-3xl text-primary mb-10">
+        <h2 className="text-center font-display text-2xl md:text-3xl text-primary mb-6 md:mb-10">
           También te puede interesar
         </h2>
         <RevealGroup className="grid grid-cols-1 sm:grid-cols-3 gap-5">

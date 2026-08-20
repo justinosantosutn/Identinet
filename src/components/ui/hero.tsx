@@ -227,18 +227,20 @@ export const Hero = () => {
             </div>
           </div>
 
-          {/* Mobile CTA badge — sits in normal flow instead of overlapping the headline */}
-          <div className="flex md:hidden justify-center mt-8">
-            <a
-              href="#contacto"
-              className="inline-flex items-center gap-2 bg-accent text-white font-bold text-sm px-6 py-3 rounded-full shadow-lg"
-            >
-              {heroContent.mobileCta}
-              <ArrowUpRight className="w-4 h-4" strokeWidth={2.5} />
-            </a>
-          </div>
         </div>
       </main>
+
+      {/* Mobile floating CTA — stays pinned to the bottom of the screen while
+          scrolling instead of only appearing once, inline, in the hero. */}
+      <div className="md:hidden fixed bottom-5 inset-x-0 z-40 flex justify-center pointer-events-none">
+        <a
+          href="#contacto"
+          className="pointer-events-auto inline-flex items-center gap-2 bg-accent text-white font-bold text-sm px-6 py-3 rounded-full shadow-[0_10px_30px_-8px_rgba(0,0,0,0.4)]"
+        >
+          {heroContent.mobileCta}
+          <ArrowUpRight className="w-4 h-4" strokeWidth={2.5} />
+        </a>
+      </div>
     </div>
   );
 };

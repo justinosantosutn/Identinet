@@ -21,7 +21,7 @@ export const Explore = () => {
         <div className="relative">
           <RevealGroup
             disableOnMobile
-            className="flex gap-5 overflow-x-auto overflow-y-visible snap-x snap-proximity pt-4 pb-2 -mx-6 px-6 no-scrollbar md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:overflow-visible"
+            className="flex gap-5 overflow-x-auto overflow-y-visible snap-x snap-proximity pt-4 pb-2 -mx-6 px-6 no-scrollbar [mask-image:linear-gradient(to_right,black_88%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,black_88%,transparent_100%)] md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:overflow-visible md:[mask-image:none] md:[-webkit-mask-image:none]"
           >
             {destinations.map(({ icon: Icon, title, desc, to, bg, fg }) => (
               <RevealItem disableOnMobile key={to} className="flex-shrink-0 w-[78%] sm:w-[55%] md:w-auto snap-center">

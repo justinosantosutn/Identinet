@@ -188,7 +188,7 @@ export const Clients = () => {
           </h2>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-4 mb-16">
+        <div className="flex flex-wrap justify-center gap-4 mb-10 md:mb-16">
           {testimonials.map((c) => (
             <Link
               key={c.slug}

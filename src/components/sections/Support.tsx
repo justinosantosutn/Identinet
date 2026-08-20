@@ -61,7 +61,7 @@ export const Support = () => {
           ))}
         </RevealGroup>
 
-        <Reveal className="text-center mt-10">
+        <Reveal className="text-center mt-6 md:mt-10">
           <p className="text-on-surface-muted text-sm mb-4">¿No encontraste tu respuesta?</p>
           <Button variant="secondary" size="default" asChild>
             <a

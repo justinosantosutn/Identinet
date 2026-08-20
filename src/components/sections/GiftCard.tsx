@@ -39,7 +39,7 @@ export const GiftCard = () => {
           </p>
         </Reveal>
 
-        <RevealGroup className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+        <RevealGroup className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6 md:mb-10">
           <RevealItem className="bg-accent text-white rounded-[2rem] p-8">
             <div className="flex items-center gap-3 mb-6">
               <Gift className="w-6 h-6" />

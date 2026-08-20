@@ -1,5 +1,4 @@
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
-import { CarouselSwipeHint } from "@/components/ui/carousel-hint";
 
 const preguntas = [
   {
@@ -40,7 +39,7 @@ export const HowItWorks = () => {
           </p>
         </Reveal>
 
-        <RevealGroup className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+        <RevealGroup className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 md:mb-16">
           <RevealItem className="bg-white border-2 border-primary rounded-[1.75rem] p-7">
             <p className="text-xs font-bold uppercase tracking-wide text-primary mb-2">Camino A</p>
             <p className="font-bold text-on-surface leading-snug">
@@ -56,32 +55,46 @@ export const HowItWorks = () => {
         </RevealGroup>
 
         <Reveal>
-          <h3 className="text-center font-display text-2xl md:text-3xl text-primary mb-10">
+          <h3 className="text-center font-display text-2xl md:text-3xl text-primary mb-6 md:mb-10">
             Tres preguntas para definir tu configuración
           </h3>
         </Reveal>
 
-        <CarouselSwipeHint />
-        <div className="relative">
-          <RevealGroup
-            disableOnMobile
-            className="flex gap-5 overflow-x-auto overflow-y-visible snap-x snap-proximity pt-4 pb-2 -mx-6 px-6 no-scrollbar md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible"
-          >
-            {preguntas.map((p) => (
-              <RevealItem
-                disableOnMobile
-                key={p.n}
-                className={`${p.bg} text-white flex-shrink-0 w-[78%] sm:w-[55%] snap-center md:w-auto rounded-[1.75rem] p-7 shadow-[6px_6px_0px_rgba(36,27,34,0.1)] hover:-translate-y-1 transition-transform`}
-              >
-                <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center font-display text-xl text-primary mb-4">
+        {/* Mobile: compact stacked list — a colored badge carries the accent
+            instead of a full-color card, so three fit without scrolling. */}
+        <div className="md:hidden space-y-3">
+          {preguntas.map((p) => (
+            <Reveal key={p.n}>
+              <div className="flex items-start gap-3 bg-white border border-border rounded-2xl p-4">
+                <span
+                  className={`${p.bg} text-white w-8 h-8 rounded-full flex items-center justify-center font-display text-sm flex-shrink-0`}
+                >
                   {p.n}
+                </span>
+                <div>
+                  <h4 className="font-bold text-sm text-on-surface mb-1 leading-snug">{p.q}</h4>
+                  <p className="text-xs text-on-surface-muted leading-relaxed">{p.a}</p>
                 </div>
-                <h4 className="font-bold text-lg mb-2 leading-snug">{p.q}</h4>
-                <p className="text-sm opacity-90 leading-relaxed">{p.a}</p>
-              </RevealItem>
-            ))}
-          </RevealGroup>
+              </div>
+            </Reveal>
+          ))}
         </div>
+
+        {/* Desktop: full-color cards in a grid */}
+        <RevealGroup className="hidden md:grid md:grid-cols-3 md:gap-6">
+          {preguntas.map((p) => (
+            <RevealItem
+              key={p.n}
+              className={`${p.bg} text-white rounded-[1.75rem] p-7 shadow-[6px_6px_0px_rgba(36,27,34,0.1)] hover:-translate-y-1 transition-transform`}
+            >
+              <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center font-display text-xl text-primary mb-4">
+                {p.n}
+              </div>
+              <h4 className="font-bold text-lg mb-2 leading-snug">{p.q}</h4>
+              <p className="text-sm opacity-90 leading-relaxed">{p.a}</p>
+            </RevealItem>
+          ))}
+        </RevealGroup>
       </div>
     </section>
   );
