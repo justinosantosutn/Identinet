@@ -1,5 +1,5 @@
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
-import { CarouselEdgeFade, CarouselSwipeHint } from "@/components/ui/carousel-hint";
+import { CarouselSwipeHint } from "@/components/ui/carousel-hint";
 
 const preguntas = [
   {
@@ -24,9 +24,9 @@ const preguntas = [
 
 export const HowItWorks = () => {
   return (
-    <section id="como-funciona" className="bg-background-soft px-6 md:px-10 py-20 md:py-28">
+    <section id="como-funciona" className="bg-background-soft px-6 md:px-10 py-14 md:py-28">
       <div className="max-w-5xl mx-auto">
-        <Reveal className="text-center mb-12">
+        <Reveal className="text-center mb-8 md:mb-12">
           <span className="inline-block bg-primary text-white rounded-full px-5 py-2 text-xs font-bold uppercase tracking-wide mb-6">
             El modelo
           </span>
@@ -63,7 +63,6 @@ export const HowItWorks = () => {
 
         <CarouselSwipeHint />
         <div className="relative">
-          <CarouselEdgeFade />
           <RevealGroup
             disableOnMobile
             className="flex gap-5 overflow-x-auto overflow-y-visible snap-x snap-proximity pt-4 pb-2 -mx-6 px-6 no-scrollbar md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible"

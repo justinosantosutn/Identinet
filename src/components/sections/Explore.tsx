@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
-import { CarouselEdgeFade, CarouselSwipeHint } from "@/components/ui/carousel-hint";
+import { CarouselSwipeHint } from "@/components/ui/carousel-hint";
 import { destinations } from "@/data/destinations";
 
 export const Explore = () => {
   return (
-    <section id="explora" className="bg-background-soft px-6 md:px-10 py-20 md:py-28">
+    <section id="explora" className="bg-background-soft px-6 md:px-10 py-14 md:py-28">
       <div className="max-w-6xl mx-auto">
-        <Reveal className="text-center mb-14">
+        <Reveal className="text-center mb-9 md:mb-14">
           <span className="inline-block bg-tertiary text-on-tertiary rounded-full px-5 py-2 text-xs font-bold uppercase tracking-wide mb-6">
             Explorá cada servicio
           </span>
@@ -19,7 +19,6 @@ export const Explore = () => {
 
         <CarouselSwipeHint />
         <div className="relative">
-          <CarouselEdgeFade />
           <RevealGroup
             disableOnMobile
             className="flex gap-5 overflow-x-auto overflow-y-visible snap-x snap-proximity pt-4 pb-2 -mx-6 px-6 no-scrollbar md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:overflow-visible"

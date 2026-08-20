@@ -7,7 +7,7 @@ import { siteConfig, whatsappUrl, instagramUrl, tiktokUrl } from "@/lib/site";
 
 export const Contact = () => {
   return (
-    <section id="contacto" className="bg-primary px-6 md:px-10 py-20 md:py-28 relative overflow-hidden">
+    <section id="contacto" className="bg-primary px-6 md:px-10 py-14 md:py-28 relative overflow-hidden">
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff14_1px,transparent_1px),linear-gradient(to_bottom,#ffffff14_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
       <SwirlCorner
         variant="mono"

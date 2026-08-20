@@ -17,13 +17,13 @@ export const GiftCard = () => {
   );
   const { importante } = giftCardContent;
   return (
-    <section id="gift-card" className="relative bg-background-soft px-6 md:px-10 py-20 md:py-28 overflow-hidden">
+    <section id="gift-card" className="relative bg-background-soft px-6 md:px-10 py-14 md:py-28 overflow-hidden">
       <SwirlCorner
         variant="candy"
         className="absolute -top-16 -right-16 w-56 h-56 md:w-72 md:h-72 opacity-40 z-0"
       />
       <div className="max-w-5xl mx-auto relative z-10">
-        <Reveal className="text-center mb-14">
+        <Reveal className="text-center mb-9 md:mb-14">
           <span className="inline-block bg-primary text-white rounded-full px-5 py-2 text-xs font-bold uppercase tracking-wide mb-6">
             Gift Card IdentiNet
           </span>

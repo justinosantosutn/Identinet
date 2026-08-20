@@ -9,9 +9,9 @@ export const ResetDigital = () => {
   const { resetDigital: resetDigitalContent } = useContent();
   const { incluye, beneficios, pasos } = resetDigitalContent;
   return (
-    <section id="reset-digital" className="bg-background-soft px-6 md:px-10 py-20 md:py-28">
+    <section id="reset-digital" className="bg-background-soft px-6 md:px-10 py-14 md:py-28">
       <div className="max-w-5xl mx-auto">
-        <Reveal className="text-center mb-14">
+        <Reveal className="text-center mb-9 md:mb-14">
           <span className="inline-block bg-quaternary text-on-quaternary rounded-full px-5 py-2 text-xs font-bold uppercase tracking-wide mb-6">
             Ideal para emprendedores
           </span>
@@ -70,7 +70,7 @@ export const ResetDigital = () => {
           </ol>
         </Reveal>
 
-        <Reveal className="text-center mb-16">
+        <Reveal className="text-center mb-10 md:mb-16">
           <Button variant="primary" size="lg" asChild>
             <a
               href={whatsappUrl("Hola! Quiero consultar el valor de Reset Digital.")}
