@@ -12,6 +12,7 @@ interface LivePreviewProps {
 const WIDTH: Record<"mobile" | "desktop", number> = { mobile: 375, desktop: 1280 };
 const STATUS_BAR_H = 44;
 const HOME_INDICATOR_H = 24;
+const BROWSER_BAR_H = 40;
 const ORIGIN = window.location.origin;
 
 /** Both modes render inside a real <iframe> — a genuine independent
@@ -33,7 +34,7 @@ export const LivePreview = ({ sectionKey, data, PreviewComponent: _unused, onHer
   const [scale, setScale] = useState(1);
 
   const targetWidth = WIDTH[mode];
-  const chromeHeight = mode === "mobile" ? STATUS_BAR_H + HOME_INDICATOR_H : 0;
+  const chromeHeight = mode === "mobile" ? STATUS_BAR_H + HOME_INDICATOR_H : BROWSER_BAR_H;
   const frameHeight = iframeHeight + chromeHeight;
 
   useEffect(() => {
@@ -143,7 +144,27 @@ export const LivePreview = ({ sectionKey, data, PreviewComponent: _unused, onHer
               </div>
             </div>
           ) : (
-            <div className="rounded-2xl border border-border overflow-hidden bg-background">{iframeEl}</div>
+            <div className="rounded-xl overflow-hidden shadow-2xl ring-1 ring-black/10 bg-white">
+              {/* Browser-window chrome — makes the preview read as "a real
+                  browser window" instead of a bare rectangle, so the edges
+                  of the page are unambiguous. */}
+              <div
+                className="flex items-center gap-4 px-4 bg-surface-alt border-b border-border"
+                style={{ height: BROWSER_BAR_H }}
+              >
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#e8949e]" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#efcf8f]" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#a9d4b0]" />
+                </div>
+                <div className="flex-1 max-w-xs mx-auto bg-white border border-border rounded-full px-3 py-1 text-center">
+                  <span className="text-[11px] font-mono text-on-surface-muted truncate">
+                    identinetstudio.com
+                  </span>
+                </div>
+              </div>
+              {iframeEl}
+            </div>
           )}
         </div>
       </div>
