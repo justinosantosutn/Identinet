@@ -124,12 +124,12 @@ const FloatingCard = ({
     style={{ top: `${position.top}%`, left: `${position.left}%` }}
   >
     <div
-      className={`w-24 sm:w-32 md:w-40 lg:w-52 aspect-[3/3.5] bg-white/70 backdrop-blur-md border border-white rounded-[1.25rem] md:rounded-[2rem] p-2.5 sm:p-3.5 md:p-5 flex flex-col items-center justify-center shadow-2xl transition-transform duration-500 ${
+      className={`w-28 sm:w-32 md:w-40 lg:w-52 aspect-[3/3.5] bg-white/70 backdrop-blur-md border border-white rounded-[1.25rem] md:rounded-[2rem] p-3 sm:p-3.5 md:p-5 flex flex-col items-center justify-center shadow-2xl transition-transform duration-500 ${
         draggable ? "ring-4 ring-primary/50" : "hover:rotate-0"
       }`}
       style={{ transform: `rotate(${rotate}deg)` }}
     >
-      <div className="w-9 h-9 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-24 lg:h-24 bg-white rounded-full flex items-center justify-center mb-1.5 sm:mb-2.5 md:mb-4 shadow-inner border-2 md:border-[3px] border-primary-light overflow-hidden">
+      <div className="w-11 h-11 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-24 lg:h-24 bg-white rounded-full flex items-center justify-center mb-2 sm:mb-2.5 md:mb-4 shadow-inner border-2 md:border-[3px] border-primary-light overflow-hidden">
         <img
           src={photo || `https://api.dicebear.com/7.x/notionists/svg?seed=${handle}&backgroundColor=ffffff`}
           alt={handle}
@@ -137,8 +137,8 @@ const FloatingCard = ({
         />
       </div>
       <div className="text-center mt-1">
-        <p className="font-bold text-[10px] sm:text-xs md:text-base lg:text-lg text-primary leading-tight">{handle}</p>
-        <p className="text-[8px] sm:text-[9px] md:text-xs text-on-surface-muted mt-0.5 md:mt-1 leading-tight">{metric}</p>
+        <p className="font-bold text-[11px] sm:text-xs md:text-base lg:text-lg text-primary leading-tight">{handle}</p>
+        <p className="text-[9px] sm:text-[9px] md:text-xs text-on-surface-muted mt-0.5 md:mt-1 leading-tight">{metric}</p>
       </div>
     </div>
   </motion.div>
@@ -198,7 +198,7 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
   const badgePosition: CardPosition =
     heroContent.badgePosition?.[breakpoint] ?? DEFAULT_BADGE_POSITION[breakpoint];
   return (
-    <div className="min-h-screen bg-background flex flex-col font-body selection:bg-accent selection:text-white relative overflow-hidden w-full">
+    <div className="md:min-h-screen bg-background flex flex-col font-body selection:bg-accent selection:text-white relative overflow-hidden w-full">
       {/* Background grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#24572e0d_1px,transparent_1px),linear-gradient(to_bottom,#24572e0d_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none z-0" />
 
@@ -243,8 +243,8 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
       </motion.nav>
 
       {/* Hero content */}
-      <main className="flex-1 relative z-10 pt-8 pb-16 md:pt-12 md:pb-28 px-4 flex flex-col items-center justify-center w-full max-w-[1440px] mx-auto">
-        <div className="relative w-full max-w-5xl mx-auto flex flex-col items-center justify-center text-center z-10 mt-4 mb-16">
+      <main className="flex-1 relative z-10 pt-4 pb-8 md:pt-12 md:pb-28 px-4 flex flex-col items-center justify-center w-full max-w-[1440px] mx-auto">
+        <div className="relative w-full max-w-5xl mx-auto flex flex-col items-center justify-center text-center z-10 mt-2 mb-10 md:mt-4 md:mb-16">
           <motion.div
             className="w-full flex flex-col items-center relative z-10 space-y-2 md:space-y-4"
             initial="hidden"
