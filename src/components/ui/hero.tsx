@@ -255,7 +255,7 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
               variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } } }}
               className="w-full flex justify-start pl-[8%] md:pl-[22%] relative z-30"
             >
-              <h1 className="text-[clamp(4.5rem,9vw,120px)] font-display leading-[0.85] tracking-tight text-accent m-0 p-0 uppercase">
+              <h1 className="text-[clamp(3.5rem,9vw,120px)] font-display leading-[0.85] tracking-tight text-accent m-0 p-0 uppercase">
                 {heroContent.line1}
               </h1>
             </motion.div>
@@ -263,7 +263,7 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
               variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } } }}
               className="w-full flex justify-center relative z-20"
             >
-              <h1 className="text-[clamp(6.5rem,14vw,200px)] font-display leading-[0.85] tracking-tight text-primary m-0 p-0 uppercase">
+              <h1 className="text-[clamp(4.25rem,14vw,200px)] font-display leading-[0.85] tracking-tight text-primary m-0 p-0 uppercase">
                 {heroContent.line2}
               </h1>
             </motion.div>
@@ -271,7 +271,7 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
               variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } } }}
               className="w-full flex justify-end pr-[6%] md:pr-[20%] relative z-10"
             >
-              <h1 className="text-[clamp(4.5rem,9vw,120px)] font-display leading-[0.85] tracking-tight text-primary m-0 p-0 uppercase">
+              <h1 className="text-[clamp(3.5rem,9vw,120px)] font-display leading-[0.85] tracking-tight text-primary m-0 p-0 uppercase">
                 {heroContent.line3}
               </h1>
             </motion.div>
