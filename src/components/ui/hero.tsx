@@ -8,6 +8,9 @@ import { useContent } from "@/lib/content-store";
 import { useIsMobile } from "@/lib/use-is-mobile";
 
 export type FloatingItemId = "card-0" | "card-1" | "cta";
+export type HeadlineLineId = "line1" | "line2" | "line3";
+
+export const DEFAULT_LINE_SCALE = 1;
 
 export interface CardPosition {
   top: number;
@@ -146,13 +149,15 @@ const FloatingCard = ({
 
 interface HeroProps {
   /** Admin-only: lets the two floating cards and the CTA badge be dragged
-   * directly in place, instead of only through a separate schematic
-   * preview that never quite matched the real layout. */
+   * directly in place, and each headline line be resized independently by
+   * its corner handle — like resizing an image — instead of only through a
+   * separate schematic preview that never quite matched the real layout. */
   editablePositions?: boolean;
   onPositionChange?: (id: FloatingItemId, breakpoint: "mobile" | "desktop", position: CardPosition) => void;
+  onLineScaleChange?: (line: HeadlineLineId, breakpoint: "mobile" | "desktop", scale: number) => void;
 }
 
-export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps = {}) => {
+export const Hero = ({ editablePositions = false, onPositionChange, onLineScaleChange }: HeroProps = {}) => {
   const { hero: heroContent } = useContent();
   const isMobile = useIsMobile();
   const breakpoint = isMobile ? "mobile" : "desktop";
@@ -161,6 +166,21 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
   // Where within the element you grabbed it, so it follows your cursor
   // instead of snapping its top-left corner to wherever you clicked.
   const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const resizeState = useRef<{ line: HeadlineLineId; startX: number; startScale: number; baseWidth: number } | null>(
+    null,
+  );
+  const lineRefs = {
+    line1: useRef<HTMLHeadingElement>(null),
+    line2: useRef<HTMLHeadingElement>(null),
+    line3: useRef<HTMLHeadingElement>(null),
+  };
+
+  const lineScaleSource: Record<HeadlineLineId, { mobile: number; desktop: number }> = {
+    line1: heroContent.line1Scale,
+    line2: heroContent.line2Scale,
+    line3: heroContent.line3Scale,
+  };
+  const lineScale = (line: HeadlineLineId): number => lineScaleSource[line]?.[breakpoint] ?? DEFAULT_LINE_SCALE;
 
   const updateFromPointer = (clientX: number, clientY: number) => {
     const id = dragId.current;
@@ -186,12 +206,30 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
     updateFromPointer(e.clientX, e.clientY);
   };
 
+  const startResize = (line: HeadlineLineId) => (e: React.PointerEvent) => {
+    if (!editablePositions || !onLineScaleChange) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const startScale = lineScale(line);
+    const el = lineRefs[line].current;
+    const baseWidth = el ? el.getBoundingClientRect().width / startScale : 200;
+    resizeState.current = { line, startX: e.clientX, startScale, baseWidth };
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  };
+
   const handleAreaPointerMove = (e: React.PointerEvent) => {
     if (dragId.current) updateFromPointer(e.clientX, e.clientY);
+    const resize = resizeState.current;
+    if (resize && onLineScaleChange) {
+      const dx = e.clientX - resize.startX;
+      const scale = Math.min(3, Math.max(0.4, resize.startScale + dx / resize.baseWidth));
+      onLineScaleChange(resize.line, breakpoint, Math.round(scale * 100) / 100);
+    }
   };
 
   const handleAreaPointerUp = () => {
     dragId.current = null;
+    resizeState.current = null;
   };
   const cardPosition = (index: 0 | 1): CardPosition =>
     heroContent.floatingCards[index]?.position?.[breakpoint] ?? DEFAULT_CARD_POSITIONS[index][breakpoint];
@@ -244,7 +282,11 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
 
       {/* Hero content */}
       <main className="flex-1 relative z-10 pt-4 pb-8 md:pt-12 md:pb-28 px-4 flex flex-col items-center justify-center w-full max-w-[1440px] mx-auto">
-        <div className="relative w-full max-w-5xl mx-auto flex flex-col items-center justify-center text-center z-10 mt-2 mb-10 md:mt-4 md:mb-16">
+        <div
+          className="relative w-full max-w-5xl mx-auto flex flex-col items-center justify-center text-center z-10 mt-2 mb-10 md:mt-4 md:mb-16"
+          onPointerMove={editablePositions ? handleAreaPointerMove : undefined}
+          onPointerUp={editablePositions ? handleAreaPointerUp : undefined}
+        >
           <motion.div
             className="w-full flex flex-col items-center relative z-10 space-y-2 md:space-y-4"
             initial="hidden"
@@ -255,36 +297,67 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
               variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } } }}
               className="w-full flex justify-start pl-[8%] md:pl-[22%] relative z-30"
             >
-              <h1 className="text-[clamp(3.5rem,9vw,120px)] font-display leading-[0.85] tracking-tight text-accent m-0 p-0 uppercase">
-                {heroContent.line1}
-              </h1>
+              <div className="relative inline-block">
+                <h1
+                  ref={lineRefs.line1}
+                  className="text-[clamp(3.5rem,9vw,120px)] font-display leading-[0.85] tracking-tight text-accent m-0 p-0 uppercase"
+                  style={{ transform: `scale(${lineScale("line1")})`, transformOrigin: "left center" }}
+                >
+                  {heroContent.line1}
+                </h1>
+                {editablePositions && onLineScaleChange && (
+                  <span
+                    onPointerDown={startResize("line1")}
+                    className="absolute -bottom-1.5 -right-1.5 w-6 h-6 bg-primary rounded-full border-2 border-white shadow-lg cursor-nwse-resize touch-none z-40"
+                  />
+                )}
+              </div>
             </motion.div>
             <motion.div
               variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } } }}
               className="w-full flex justify-center relative z-20"
             >
-              <h1 className="text-[clamp(4.25rem,14vw,200px)] font-display leading-[0.85] tracking-tight text-primary m-0 p-0 uppercase">
-                {heroContent.line2}
-              </h1>
+              <div className="relative inline-block">
+                <h1
+                  ref={lineRefs.line2}
+                  className="text-[clamp(4.25rem,14vw,200px)] font-display leading-[0.85] tracking-tight text-primary m-0 p-0 uppercase"
+                  style={{ transform: `scale(${lineScale("line2")})`, transformOrigin: "center center" }}
+                >
+                  {heroContent.line2}
+                </h1>
+                {editablePositions && onLineScaleChange && (
+                  <span
+                    onPointerDown={startResize("line2")}
+                    className="absolute -bottom-1.5 -right-1.5 w-6 h-6 bg-primary rounded-full border-2 border-white shadow-lg cursor-nwse-resize touch-none z-40"
+                  />
+                )}
+              </div>
             </motion.div>
             <motion.div
               variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } } }}
               className="w-full flex justify-end pr-[6%] md:pr-[20%] relative z-10"
             >
-              <h1 className="text-[clamp(3.5rem,9vw,120px)] font-display leading-[0.85] tracking-tight text-primary m-0 p-0 uppercase">
-                {heroContent.line3}
-              </h1>
+              <div className="relative inline-block">
+                <h1
+                  ref={lineRefs.line3}
+                  className="text-[clamp(3.5rem,9vw,120px)] font-display leading-[0.85] tracking-tight text-primary m-0 p-0 uppercase"
+                  style={{ transform: `scale(${lineScale("line3")})`, transformOrigin: "right center" }}
+                >
+                  {heroContent.line3}
+                </h1>
+                {editablePositions && onLineScaleChange && (
+                  <span
+                    onPointerDown={startResize("line3")}
+                    className="absolute -bottom-1.5 -right-1.5 w-6 h-6 bg-primary rounded-full border-2 border-white shadow-lg cursor-nwse-resize touch-none z-40"
+                  />
+                )}
+              </div>
             </motion.div>
           </motion.div>
 
           {/* Floating testimonial cards — diagonal + bobbing on every breakpoint, just
               repositioned/resized smaller on mobile so they clear the headline text. */}
-          <div
-            ref={floatingAreaRef}
-            onPointerMove={editablePositions ? handleAreaPointerMove : undefined}
-            onPointerUp={editablePositions ? handleAreaPointerUp : undefined}
-            className="absolute inset-0 w-full h-full pointer-events-none"
-          >
+          <div ref={floatingAreaRef} className="absolute inset-0 w-full h-full pointer-events-none">
             {heroContent.floatingCards[0] && (
               <FloatingCard
                 handle={heroContent.floatingCards[0].handle}

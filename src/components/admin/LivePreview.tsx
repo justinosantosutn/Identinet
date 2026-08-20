@@ -1,12 +1,13 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ComponentType } from "react";
 import { Monitor, Smartphone } from "lucide-react";
-import type { FloatingItemId, CardPosition } from "@/components/ui/hero";
+import type { FloatingItemId, HeadlineLineId, CardPosition } from "@/components/ui/hero";
 
 interface LivePreviewProps {
   sectionKey: string;
   data: unknown;
   PreviewComponent: ComponentType;
   onHeroPositionChange?: (id: FloatingItemId, breakpoint: "mobile" | "desktop", position: CardPosition) => void;
+  onHeroLineScaleChange?: (line: HeadlineLineId, breakpoint: "mobile" | "desktop", scale: number) => void;
 }
 
 const WIDTH: Record<"mobile" | "desktop", number> = { mobile: 375, desktop: 1280 };
@@ -24,7 +25,13 @@ const ORIGIN = window.location.origin;
  * shrunk visual size, so proportions were always off. Desktop is wrapped
  * in its own CSS scale (on the iframe box, not its content) purely to fit
  * the sidebar column — the content inside still renders at true 1280px. */
-export const LivePreview = ({ sectionKey, data, PreviewComponent: _unused, onHeroPositionChange }: LivePreviewProps) => {
+export const LivePreview = ({
+  sectionKey,
+  data,
+  PreviewComponent: _unused,
+  onHeroPositionChange,
+  onHeroLineScaleChange,
+}: LivePreviewProps) => {
   void _unused;
   const [mode, setMode] = useState<"desktop" | "mobile">("desktop");
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -45,11 +52,14 @@ export const LivePreview = ({ sectionKey, data, PreviewComponent: _unused, onHer
       if (e.data?.type === "identinet-preview-position-change") {
         onHeroPositionChange?.(e.data.id, e.data.breakpoint, e.data.position);
       }
+      if (e.data?.type === "identinet-preview-scale-change") {
+        onHeroLineScaleChange?.(e.data.line, e.data.breakpoint, e.data.scale);
+      }
     };
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onHeroPositionChange]);
+  }, [onHeroPositionChange, onHeroLineScaleChange]);
 
   useEffect(() => {
     if (!iframeReady) return;

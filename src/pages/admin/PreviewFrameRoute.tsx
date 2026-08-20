@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ContentProvider, ContentOverride } from "@/lib/content-store";
-import { Hero, type FloatingItemId, type CardPosition } from "@/components/ui/hero";
+import { Hero, type FloatingItemId, type HeadlineLineId, type CardPosition } from "@/components/ui/hero";
 import { previewComponents } from "./previewComponents";
 
 const MESSAGE_ORIGIN = window.location.origin;
@@ -52,6 +52,12 @@ const PreviewFrameInner = () => {
           onPositionChange={(id: FloatingItemId, breakpoint: "mobile" | "desktop", position: CardPosition) => {
             window.parent.postMessage(
               { type: "identinet-preview-position-change", id, breakpoint, position },
+              MESSAGE_ORIGIN,
+            );
+          }}
+          onLineScaleChange={(line: HeadlineLineId, breakpoint: "mobile" | "desktop", scale: number) => {
+            window.parent.postMessage(
+              { type: "identinet-preview-scale-change", line, breakpoint, scale },
               MESSAGE_ORIGIN,
             );
           }}

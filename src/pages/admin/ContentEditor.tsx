@@ -8,20 +8,25 @@ import { hydrateSite, type SiteConfig } from "@/lib/site";
 import { hydratePacks, type Pack, type ComparisonRow } from "@/data/packs";
 import { hydrateClients, type ClientCase } from "@/data/clients";
 import { LivePreview } from "@/components/admin/LivePreview";
-import type { FloatingItemId, CardPosition } from "@/components/ui/hero";
+import type { FloatingItemId, HeadlineLineId, CardPosition } from "@/components/ui/hero";
 import { previewComponents } from "./previewComponents";
 import { getSection, sections } from "./schemas";
 
 interface FloatingCardDraft {
   handle: string;
   metric: string;
-  avatarSeed: string;
+  photo?: string;
   position?: { mobile?: CardPosition; desktop?: CardPosition };
 }
+
+type LineScale = { mobile?: number; desktop?: number };
 
 interface HeroDraft {
   floatingCards: FloatingCardDraft[];
   badgePosition?: { mobile?: CardPosition; desktop?: CardPosition };
+  line1Scale?: LineScale;
+  line2Scale?: LineScale;
+  line3Scale?: LineScale;
 }
 
 type Status = "loading" | "ready" | "saving" | "saved" | "error";
@@ -188,6 +193,15 @@ const ContentEditorInner = () => {
     });
   };
 
+  const handleHeroLineScaleChange = (line: HeadlineLineId, breakpoint: "mobile" | "desktop", scale: number) => {
+    setData((prev: unknown) => {
+      const draft = structuredClone(prev) as HeroDraft;
+      const key = `${line}Scale` as "line1Scale" | "line2Scale" | "line3Scale";
+      draft[key] = { ...draft[key], [breakpoint]: scale };
+      return draft;
+    });
+  };
+
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3 md:gap-4 mb-2">
@@ -292,6 +306,7 @@ const ContentEditorInner = () => {
                 data={data}
                 PreviewComponent={PreviewComponent}
                 onHeroPositionChange={section.key === "hero" ? handleHeroPositionChange : undefined}
+                onHeroLineScaleChange={section.key === "hero" ? handleHeroLineScaleChange : undefined}
               />
             </div>
           )}
