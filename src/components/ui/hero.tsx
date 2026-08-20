@@ -222,25 +222,21 @@ export const Hero = () => {
               <ArrowAccentRight />
             </div>
 
-            <div className="hidden md:block absolute bottom-[-14%] right-[0%] z-40 pointer-events-auto">
-              <CircularBadge badgeText={heroContent.badgeText} />
-            </div>
           </div>
 
         </div>
       </main>
 
-      {/* Mobile floating CTA — stays pinned to the bottom of the screen while
-          scrolling instead of only appearing once, inline, in the hero. */}
-      <div className="md:hidden fixed bottom-5 inset-x-0 z-40 flex justify-center pointer-events-none">
-        <a
-          href="#contacto"
-          className="pointer-events-auto inline-flex items-center gap-2 bg-accent text-white font-bold text-sm px-6 py-3 rounded-full shadow-[0_10px_30px_-8px_rgba(0,0,0,0.4)]"
-        >
-          {heroContent.mobileCta}
-          <ArrowUpRight className="w-4 h-4" strokeWidth={2.5} />
-        </a>
-      </div>
+      {/* Floating "book a call" badge — fixed on every breakpoint so it's a
+          direct, always-reachable link to #contacto, not just a decorative
+          hero element. */}
+      <a
+        href="#contacto"
+        aria-label="Ir a contacto"
+        className="fixed bottom-6 right-6 z-40"
+      >
+        <CircularBadge badgeText={heroContent.badgeText} />
+      </a>
     </div>
   );
 };
