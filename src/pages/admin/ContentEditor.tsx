@@ -57,6 +57,9 @@ const ContentEditorInner = () => {
   const [savedData, setSavedData] = useState<unknown>(null);
   const [status, setStatus] = useState<Status>("loading");
   const [error, setError] = useState<string | null>(null);
+  // Vercel Blob's own upload timestamp, used to detect a concurrent save by
+  // someone else editing the same section — see api/content/[key].js.
+  const [version, setVersion] = useState<string | null>(null);
 
   useEffect(() => {
     if (!section) return;
@@ -68,6 +71,7 @@ const ContentEditorInner = () => {
     fetch(`/api/content/${section.key}`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        if (!ignore) setVersion(res.headers.get("X-Content-Version"));
         return res.json();
       })
       .then((json) => {
@@ -144,6 +148,7 @@ const ContentEditorInner = () => {
         headers: {
           "Content-Type": "application/json",
           "x-admin-passcode": getAdminPasscode(),
+          ...(version ? { "x-content-version": version } : {}),
         },
         body: JSON.stringify(data),
       });
@@ -152,7 +157,13 @@ const ContentEditorInner = () => {
           "Tu sesión de admin venció o quedó incompleta. Recargá esta página y volvé a ingresar el código.",
         );
       }
+      if (res.status === 409) {
+        throw new Error(
+          "Alguien más guardó cambios en esta sección mientras la editabas. Recargá la página para ver la versión más reciente y volvé a aplicar los tuyos.",
+        );
+      }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setVersion(res.headers.get("X-Content-Version"));
       setSavedData(data);
       setStatus("saved");
       // Content is rendered from data fetched once at app boot, so a hard
