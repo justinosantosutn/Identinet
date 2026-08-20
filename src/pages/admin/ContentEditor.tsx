@@ -144,6 +144,11 @@ const ContentEditorInner = () => {
         },
         body: JSON.stringify(data),
       });
+      if (res.status === 401) {
+        throw new Error(
+          "Tu sesión de admin venció o quedó incompleta. Recargá esta página y volvé a ingresar el código.",
+        );
+      }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setSavedData(data);
       setStatus("saved");
@@ -151,8 +156,12 @@ const ContentEditorInner = () => {
       // reload is the simplest way to guarantee every page reflects the save.
       setTimeout(() => window.location.reload(), 900);
     } catch (err) {
-      setError(String(err));
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
       setStatus("error");
+      // A save failure is easy to miss as small red text below a busy form —
+      // make it impossible to not notice.
+      alert(`No se guardaron los cambios: ${message}`);
     }
   };
 
@@ -160,7 +169,7 @@ const ContentEditorInner = () => {
 
   return (
     <div>
-      <div className="flex items-start justify-between gap-4 mb-2">
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3 md:gap-4 mb-2">
         <div className="min-w-0">
           <div className="relative inline-block mb-1">
             <select
@@ -169,7 +178,7 @@ const ContentEditorInner = () => {
                 if (!confirmLeaveIfDirty()) return;
                 navigate(`/admin/${e.target.value}`);
               }}
-              className="appearance-none font-display text-3xl text-primary bg-transparent pr-8 cursor-pointer focus:outline-none"
+              className="appearance-none font-display text-2xl md:text-3xl text-primary bg-transparent pr-8 cursor-pointer focus:outline-none max-w-full"
             >
               {sections.map((s) => (
                 <option key={s.key} value={s.key}>
@@ -181,7 +190,7 @@ const ContentEditorInner = () => {
           </div>
           <p className="text-on-surface-muted text-sm">{section.description}</p>
         </div>
-        <div className="flex-shrink-0 flex items-center gap-2">
+        <div className="flex-shrink-0 flex flex-wrap items-center gap-2">
           {hasChanges && (
             <button
               onClick={discard}
