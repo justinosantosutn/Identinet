@@ -1,9 +1,14 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent, type MouseEvent } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { Lock, TriangleAlert } from "lucide-react";
 import { useContent } from "@/lib/content-store";
 import { isAdminUnlocked, unlockAdmin } from "@/lib/admin-auth";
+import { confirmLeaveIfDirty } from "@/lib/admin-dirty";
 import { sections } from "./schemas";
+
+const guardNav = (e: MouseEvent) => {
+  if (!confirmLeaveIfDirty()) e.preventDefault();
+};
 
 const AdminGate = ({ children }: { children: React.ReactNode }) => {
   const { site } = useContent();
@@ -58,7 +63,7 @@ const AdminGate = ({ children }: { children: React.ReactNode }) => {
         <button type="submit" className="w-full bg-primary text-white font-bold text-sm py-2.5 rounded-full mt-2">
           Entrar
         </button>
-        <Link to="/" className="block text-center text-xs text-on-surface-muted mt-4 hover:text-primary">
+        <Link to="/" className="block text-center text-xs text-on-surface-muted mt-4 hover:text-primary" onClick={guardNav}>
           ← Volver al sitio
         </Link>
       </form>
@@ -72,13 +77,14 @@ const AdminLayout = () => {
       <div className="min-h-screen bg-background flex flex-col md:flex-row">
         <aside className="md:w-64 flex-shrink-0 border-b md:border-b-0 md:border-r border-border bg-white">
           <div className="p-6">
-            <Link to="/admin" className="block mb-6">
+            <Link to="/admin" className="block mb-6" onClick={guardNav}>
               <img src="/logo-identinet.png" alt="IdentiNet Studio" className="h-7 w-auto" />
             </Link>
             <nav className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible no-scrollbar">
               <NavLink
                 to="/admin"
                 end
+                onClick={guardNav}
                 className={({ isActive }) =>
                   `flex-shrink-0 px-3 py-2 rounded-lg text-sm font-semibold whitespace-nowrap ${
                     isActive ? "bg-primary text-white" : "text-on-surface hover:bg-surface-alt"
@@ -91,6 +97,7 @@ const AdminLayout = () => {
                 <NavLink
                   key={s.key}
                   to={`/admin/${s.key}`}
+                  onClick={guardNav}
                   className={({ isActive }) =>
                     `flex-shrink-0 px-3 py-2 rounded-lg text-sm font-semibold whitespace-nowrap ${
                       isActive ? "bg-primary text-white" : "text-on-surface hover:bg-surface-alt"
@@ -110,7 +117,7 @@ const AdminLayout = () => {
           </div>
         </aside>
 
-        <main className="flex-1 p-6 md:p-10 max-w-4xl">
+        <main className="flex-1 p-6 md:p-10 max-w-6xl">
           <Outlet />
         </main>
       </div>

@@ -136,3 +136,18 @@ export const useContent = (): ContentBundle => {
   if (!ctx) throw new Error("useContent debe usarse dentro de <ContentProvider>");
   return ctx;
 };
+
+/** Overrides one or more content keys for everything rendered inside it —
+ * used by the admin preview to show a section's unsaved draft using the
+ * real site components, without touching what's actually saved. */
+export const ContentOverride = ({
+  overrides,
+  children,
+}: {
+  overrides: Partial<ContentBundle>;
+  children: ReactNode;
+}) => {
+  const base = useContent();
+  const merged = { ...base, ...overrides };
+  return <ContentContext.Provider value={merged}>{children}</ContentContext.Provider>;
+};

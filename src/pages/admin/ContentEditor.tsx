@@ -1,16 +1,45 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Check, ExternalLink, Loader2, RotateCcw, Save } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Check, ChevronDown, ExternalLink, Loader2, RotateCcw, Save } from "lucide-react";
 import { ObjectFields } from "@/components/admin/ObjectFields";
 import { getAdminPasscode } from "@/lib/admin-auth";
-import { getSection } from "./schemas";
+import { setAdminDirty, confirmLeaveIfDirty } from "@/lib/admin-dirty";
+import { ContentOverride } from "@/lib/content-store";
+import { hydrateSite, type SiteConfig } from "@/lib/site";
+import { hydratePacks, type Pack, type ComparisonRow } from "@/data/packs";
+import { hydrateClients, type ClientCase } from "@/data/clients";
+import { PreviewFrame } from "@/components/admin/PreviewFrame";
+import { PreviewBoundary } from "@/components/admin/PreviewBoundary";
+import { previewComponents } from "./previewComponents";
+import { getSection, sections } from "./schemas";
 
 type Status = "loading" | "ready" | "saving" | "saved" | "error";
 
 const isDigitsOnly = (v: string) => /^\d+$/.test(v);
 
+/** Section keys whose live components read from the mutable singleton
+ * modules (lib/site, data/packs, data/clients) instead of useContent() —
+ * the preview has to hydrate those in sync with the draft, not just
+ * override context, or it would keep showing the last-saved values. */
+const syncSingleton = (key: string, value: unknown) => {
+  if (key === "site") hydrateSite(value as SiteConfig);
+  if (key === "packs") hydratePacks(value as { packs: Pack[]; comparison: ComparisonRow[] });
+  if (key === "clients") hydrateClients(value as ClientCase[]);
+};
+
+// Forces a full remount when the section changes, instead of reusing the
+// same instance — otherwise there's a render frame where `section` already
+// points at the new key but `data` state still holds the old section's
+// shape, which can crash a preview component (e.g. an array handed to a
+// component expecting an object) and take down the whole app.
 const ContentEditor = () => {
   const { key } = useParams();
+  return <ContentEditorInner key={key} />;
+};
+
+const ContentEditorInner = () => {
+  const { key } = useParams();
+  const navigate = useNavigate();
   const section = key ? getSection(key) : undefined;
   const [data, setData] = useState<unknown>(null);
   const [savedData, setSavedData] = useState<unknown>(null);
@@ -45,6 +74,23 @@ const ContentEditor = () => {
     };
   }, [section]);
 
+  // Keep the singleton-backed preview components (site/packs/clients) in
+  // sync with the draft while this editor is open, and put back whatever
+  // was actually last saved when leaving — so navigating elsewhere in the
+  // admin never leaves the rest of the app showing unsaved draft data.
+  useEffect(() => {
+    if (!section || data === null) return;
+    syncSingleton(section.key, data);
+  }, [section, data]);
+
+  useEffect(() => {
+    if (!section) return;
+    return () => {
+      if (savedData !== null) syncSingleton(section.key, savedData);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [section]);
+
   const whatsappError = useMemo(() => {
     if (section?.key !== "site" || !data) return null;
     const value = (data as { whatsapp?: string }).whatsapp ?? "";
@@ -55,11 +101,25 @@ const ContentEditor = () => {
     return null;
   }, [section, data]);
 
+  const hasChanges = JSON.stringify(data) !== JSON.stringify(savedData);
+
+  useEffect(() => {
+    setAdminDirty(hasChanges);
+    return () => setAdminDirty(false);
+  }, [hasChanges]);
+
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (!hasChanges) return;
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [hasChanges]);
+
   if (!section) {
     return <p className="text-on-surface-muted">Sección no encontrada.</p>;
   }
-
-  const hasChanges = JSON.stringify(data) !== JSON.stringify(savedData);
 
   const discard = () => setData(savedData);
 
@@ -87,11 +147,29 @@ const ContentEditor = () => {
     }
   };
 
+  const PreviewComponent = previewComponents[section.key];
+
   return (
     <div>
       <div className="flex items-start justify-between gap-4 mb-2">
-        <div>
-          <h1 className="font-display text-3xl text-primary mb-1">{section.title}</h1>
+        <div className="min-w-0">
+          <div className="relative inline-block mb-1">
+            <select
+              value={section.key}
+              onChange={(e) => {
+                if (!confirmLeaveIfDirty()) return;
+                navigate(`/admin/${e.target.value}`);
+              }}
+              className="appearance-none font-display text-3xl text-primary bg-transparent pr-8 cursor-pointer focus:outline-none"
+            >
+              {sections.map((s) => (
+                <option key={s.key} value={s.key}>
+                  {s.title}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="w-5 h-5 text-primary pointer-events-none absolute right-0 top-1/2 -translate-y-1/2" />
+          </div>
           <p className="text-on-surface-muted text-sm">{section.description}</p>
         </div>
         <div className="flex-shrink-0 flex items-center gap-2">
@@ -143,19 +221,36 @@ const ContentEditor = () => {
       )}
 
       {data !== null && status !== "loading" && (
-        <div className="bg-white border border-border rounded-2xl p-6">
-          {section.schema.kind === "array" ? (
-            <ObjectFields
-              fields={[{ key: "__root", label: section.title, kind: "array", itemLabel: section.schema.itemLabel, fields: section.schema.fields }]}
-              value={{ __root: data }}
-              onChange={(v) => setData(v.__root)}
-            />
-          ) : (
-            <ObjectFields
-              fields={section.schema.fields}
-              value={data as Record<string, unknown>}
-              onChange={setData}
-            />
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_440px] gap-6 items-start">
+          <div className="bg-white border border-border rounded-2xl p-6">
+            {section.schema.kind === "array" ? (
+              <ObjectFields
+                fields={[{ key: "__root", label: section.title, kind: "array", itemLabel: section.schema.itemLabel, fields: section.schema.fields }]}
+                value={{ __root: data }}
+                onChange={(v) => setData(v.__root)}
+              />
+            ) : (
+              <ObjectFields
+                fields={section.schema.fields}
+                value={data as Record<string, unknown>}
+                onChange={setData}
+              />
+            )}
+          </div>
+
+          {PreviewComponent && (
+            <div className="xl:sticky xl:top-6">
+              <p className="text-xs font-bold uppercase tracking-wide text-on-surface-muted mb-3">
+                Preview — así quedaría
+              </p>
+              <PreviewBoundary key={JSON.stringify(data)}>
+                <PreviewFrame>
+                  <ContentOverride overrides={{ [section.key]: data } as never}>
+                    <PreviewComponent />
+                  </ContentOverride>
+                </PreviewFrame>
+              </PreviewBoundary>
+            </div>
           )}
         </div>
       )}
