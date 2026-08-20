@@ -124,12 +124,12 @@ const FloatingCard = ({
     style={{ top: `${position.top}%`, left: `${position.left}%` }}
   >
     <div
-      className={`w-28 sm:w-32 md:w-40 lg:w-52 aspect-[3/3.5] bg-white/70 backdrop-blur-md border border-white rounded-[1.25rem] md:rounded-[2rem] p-3 sm:p-3.5 md:p-5 flex flex-col items-center justify-center shadow-2xl transition-transform duration-500 ${
+      className={`w-32 sm:w-32 md:w-40 lg:w-52 aspect-[3/3.5] bg-white/70 backdrop-blur-md border border-white rounded-[1.5rem] md:rounded-[2rem] p-3.5 flex flex-col items-center justify-center shadow-2xl transition-transform duration-500 ${
         draggable ? "ring-4 ring-primary/50" : "hover:rotate-0"
       }`}
       style={{ transform: `rotate(${rotate}deg)` }}
     >
-      <div className="w-11 h-11 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-24 lg:h-24 bg-white rounded-full flex items-center justify-center mb-2 sm:mb-2.5 md:mb-4 shadow-inner border-2 md:border-[3px] border-primary-light overflow-hidden">
+      <div className="w-12 h-12 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-24 lg:h-24 bg-white rounded-full flex items-center justify-center mb-2.5 shadow-inner border-2 md:border-[3px] border-primary-light overflow-hidden">
         <img
           src={photo || `https://api.dicebear.com/7.x/notionists/svg?seed=${handle}&backgroundColor=ffffff`}
           alt={handle}
@@ -137,8 +137,8 @@ const FloatingCard = ({
         />
       </div>
       <div className="text-center mt-1">
-        <p className="font-bold text-[11px] sm:text-xs md:text-base lg:text-lg text-primary leading-tight">{handle}</p>
-        <p className="text-[9px] sm:text-[9px] md:text-xs text-on-surface-muted mt-0.5 md:mt-1 leading-tight">{metric}</p>
+        <p className="font-bold text-xs md:text-base lg:text-lg text-primary leading-tight">{handle}</p>
+        <p className="text-[10px] md:text-xs text-on-surface-muted mt-0.5 md:mt-1 leading-tight">{metric}</p>
       </div>
     </div>
   </motion.div>
@@ -198,7 +198,7 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
   const badgePosition: CardPosition =
     heroContent.badgePosition?.[breakpoint] ?? DEFAULT_BADGE_POSITION[breakpoint];
   return (
-    <div className="md:min-h-screen bg-background flex flex-col font-body selection:bg-accent selection:text-white relative overflow-hidden w-full">
+    <div className="min-h-screen bg-background flex flex-col font-body selection:bg-accent selection:text-white relative overflow-hidden w-full">
       {/* Background grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#24572e0d_1px,transparent_1px),linear-gradient(to_bottom,#24572e0d_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none z-0" />
 
@@ -255,7 +255,7 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
               variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } } }}
               className="w-full flex justify-start pl-[8%] md:pl-[22%] relative z-30"
             >
-              <h1 className="text-[clamp(3rem,9vw,120px)] font-display leading-[0.85] tracking-tight text-accent m-0 p-0 uppercase">
+              <h1 className="text-[clamp(4.5rem,9vw,120px)] font-display leading-[0.85] tracking-tight text-accent m-0 p-0 uppercase">
                 {heroContent.line1}
               </h1>
             </motion.div>
@@ -263,7 +263,7 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
               variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } } }}
               className="w-full flex justify-center relative z-20"
             >
-              <h1 className="text-[clamp(4.5rem,14vw,200px)] font-display leading-[0.85] tracking-tight text-primary m-0 p-0 uppercase">
+              <h1 className="text-[clamp(6.5rem,14vw,200px)] font-display leading-[0.85] tracking-tight text-primary m-0 p-0 uppercase">
                 {heroContent.line2}
               </h1>
             </motion.div>
@@ -271,7 +271,7 @@ export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps 
               variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } } }}
               className="w-full flex justify-end pr-[6%] md:pr-[20%] relative z-10"
             >
-              <h1 className="text-[clamp(3rem,9vw,120px)] font-display leading-[0.85] tracking-tight text-primary m-0 p-0 uppercase">
+              <h1 className="text-[clamp(4.5rem,9vw,120px)] font-display leading-[0.85] tracking-tight text-primary m-0 p-0 uppercase">
                 {heroContent.line3}
               </h1>
             </motion.div>
