@@ -82,7 +82,11 @@ export const LivePreview = ({ sectionKey, data, PreviewComponent, onHeroPosition
       </div>
 
       {mode === "desktop" ? (
-        <PreviewBoundary key={JSON.stringify(data)}>
+        // Keyed by section only, not by data — keying by data (which changes
+        // on every keystroke/drag pixel) forced a full remount on every
+        // edit, which cut drags short mid-gesture and made the next click
+        // land against a not-yet-remeasured PreviewFrame.
+        <PreviewBoundary key={sectionKey}>
           <PreviewFrame>
             <ContentOverride overrides={{ [sectionKey]: data } as never}>
               {sectionKey === "hero" ? (

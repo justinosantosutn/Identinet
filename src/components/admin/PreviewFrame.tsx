@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 interface PreviewFrameProps {
   width?: number;
@@ -16,7 +16,11 @@ export const PreviewFrame = ({ width = 1040, maxScale = 0.42, children }: Previe
   const [height, setHeight] = useState(0);
   const [scale, setScale] = useState(maxScale);
 
-  useEffect(() => {
+  // useLayoutEffect (not useEffect) so the scale is correct before the
+  // browser paints — avoids a flash at the wrong size, and more importantly
+  // avoids a stale `scale` being used by anything (like a drag handler) that
+  // reads the DOM on the very next frame.
+  useLayoutEffect(() => {
     const outer = outerRef.current;
     if (!outer) return;
     const measure = () => {
@@ -29,7 +33,7 @@ export const PreviewFrame = ({ width = 1040, maxScale = 0.42, children }: Previe
     return () => ro.disconnect();
   }, [width, maxScale]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = innerRef.current;
     if (!el) return;
     const measure = () => setHeight(el.offsetHeight);
