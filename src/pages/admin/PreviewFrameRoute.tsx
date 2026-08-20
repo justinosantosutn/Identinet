@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ContentProvider, ContentOverride } from "@/lib/content-store";
+import { Hero, type FloatingItemId, type CardPosition } from "@/components/ui/hero";
 import { previewComponents } from "./previewComponents";
 
 const MESSAGE_ORIGIN = window.location.origin;
@@ -42,6 +43,22 @@ const PreviewFrameInner = () => {
 
   const Component = key ? previewComponents[key] : undefined;
   if (!Component || !ready) return null;
+
+  if (key === "hero") {
+    return (
+      <ContentOverride overrides={{ hero: draft } as never}>
+        <Hero
+          editablePositions
+          onPositionChange={(id: FloatingItemId, breakpoint: "mobile" | "desktop", position: CardPosition) => {
+            window.parent.postMessage(
+              { type: "identinet-preview-position-change", id, breakpoint, position },
+              MESSAGE_ORIGIN,
+            );
+          }}
+        />
+      </ContentOverride>
+    );
+  }
 
   return (
     <ContentOverride overrides={{ [key as string]: draft } as never}>

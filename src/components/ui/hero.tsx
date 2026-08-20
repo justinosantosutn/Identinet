@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
@@ -5,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/ui/brand-icons";
 import { useContent } from "@/lib/content-store";
 import { useIsMobile } from "@/lib/use-is-mobile";
+
+export type FloatingItemId = "card-0" | "card-1" | "cta";
 
 export interface CardPosition {
   top: number;
@@ -62,8 +65,12 @@ const ArrowAccentRight = () => (
   </svg>
 );
 
-const CircularBadge = ({ badgeText }: { badgeText: string }) => (
-  <div className="relative w-28 h-28 md:w-36 md:h-36 bg-accent rounded-full flex items-center justify-center shadow-xl rotate-12 hover:scale-105 transition-transform cursor-pointer border-[3px] border-white">
+const CircularBadge = ({ badgeText, draggable = false }: { badgeText: string; draggable?: boolean }) => (
+  <div
+    className={`relative w-28 h-28 md:w-36 md:h-36 bg-accent rounded-full flex items-center justify-center shadow-xl rotate-12 transition-transform border-[3px] border-white ${
+      draggable ? "ring-4 ring-primary/50" : "hover:scale-105 cursor-pointer"
+    }`}
+  >
     <div className="absolute inset-1 animate-[spin_12s_linear_infinite]">
       <svg viewBox="0 0 100 100" className="w-full h-full">
         <path
@@ -95,6 +102,8 @@ interface FloatingCardProps {
   position: CardPosition;
   rotate: number;
   delay?: number;
+  draggable?: boolean;
+  onPointerDown?: (e: React.PointerEvent) => void;
 }
 
 const FloatingCard = ({
@@ -104,15 +113,20 @@ const FloatingCard = ({
   position,
   rotate,
   delay = 0,
+  draggable = false,
+  onPointerDown,
 }: FloatingCardProps) => (
   <motion.div
-    animate={{ y: [0, -16, 0] }}
+    animate={{ y: draggable ? 0 : [0, -16, 0] }}
     transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay }}
-    className="absolute z-30 pointer-events-auto"
+    onPointerDown={onPointerDown}
+    className={`absolute z-30 pointer-events-auto ${draggable ? "cursor-grab active:cursor-grabbing touch-none" : ""}`}
     style={{ top: `${position.top}%`, left: `${position.left}%` }}
   >
     <div
-      className="w-24 sm:w-32 md:w-40 lg:w-52 aspect-[3/3.5] bg-white/70 backdrop-blur-md border border-white rounded-[1.25rem] md:rounded-[2rem] p-2.5 sm:p-3.5 md:p-5 flex flex-col items-center justify-center shadow-2xl hover:rotate-0 transition-transform duration-500"
+      className={`w-24 sm:w-32 md:w-40 lg:w-52 aspect-[3/3.5] bg-white/70 backdrop-blur-md border border-white rounded-[1.25rem] md:rounded-[2rem] p-2.5 sm:p-3.5 md:p-5 flex flex-col items-center justify-center shadow-2xl transition-transform duration-500 ${
+        draggable ? "ring-4 ring-primary/50" : "hover:rotate-0"
+      }`}
       style={{ transform: `rotate(${rotate}deg)` }}
     >
       <div className="w-9 h-9 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-24 lg:h-24 bg-white rounded-full flex items-center justify-center mb-1.5 sm:mb-2.5 md:mb-4 shadow-inner border-2 md:border-[3px] border-primary-light overflow-hidden">
@@ -130,10 +144,48 @@ const FloatingCard = ({
   </motion.div>
 );
 
-export const Hero = () => {
+interface HeroProps {
+  /** Admin-only: lets the two floating cards and the CTA badge be dragged
+   * directly in place, instead of only through a separate schematic
+   * preview that never quite matched the real layout. */
+  editablePositions?: boolean;
+  onPositionChange?: (id: FloatingItemId, breakpoint: "mobile" | "desktop", position: CardPosition) => void;
+}
+
+const clampPercent = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+
+export const Hero = ({ editablePositions = false, onPositionChange }: HeroProps = {}) => {
   const { hero: heroContent } = useContent();
   const isMobile = useIsMobile();
   const breakpoint = isMobile ? "mobile" : "desktop";
+  const floatingAreaRef = useRef<HTMLDivElement>(null);
+  const dragId = useRef<FloatingItemId | null>(null);
+
+  const updateFromPointer = (clientX: number, clientY: number) => {
+    const id = dragId.current;
+    const area = floatingAreaRef.current;
+    if (!id || !area || !onPositionChange) return;
+    const rect = area.getBoundingClientRect();
+    const left = clampPercent(((clientX - rect.left) / rect.width) * 100, 0, 92);
+    const top = clampPercent(((clientY - rect.top) / rect.height) * 100, 0, 88);
+    onPositionChange(id, breakpoint, { top: Math.round(top), left: Math.round(left) });
+  };
+
+  const startDrag = (id: FloatingItemId) => (e: React.PointerEvent) => {
+    if (!editablePositions) return;
+    e.preventDefault();
+    dragId.current = id;
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    updateFromPointer(e.clientX, e.clientY);
+  };
+
+  const handleAreaPointerMove = (e: React.PointerEvent) => {
+    if (dragId.current) updateFromPointer(e.clientX, e.clientY);
+  };
+
+  const handleAreaPointerUp = () => {
+    dragId.current = null;
+  };
   const cardPosition = (index: 0 | 1): CardPosition =>
     heroContent.floatingCards[index]?.position?.[breakpoint] ?? DEFAULT_CARD_POSITIONS[index][breakpoint];
   const badgePosition: CardPosition =
@@ -220,7 +272,12 @@ export const Hero = () => {
 
           {/* Floating testimonial cards — diagonal + bobbing on every breakpoint, just
               repositioned/resized smaller on mobile so they clear the headline text. */}
-          <div className="absolute inset-0 w-full h-full pointer-events-none">
+          <div
+            ref={floatingAreaRef}
+            onPointerMove={editablePositions ? handleAreaPointerMove : undefined}
+            onPointerUp={editablePositions ? handleAreaPointerUp : undefined}
+            className="absolute inset-0 w-full h-full pointer-events-none"
+          >
             {heroContent.floatingCards[0] && (
               <FloatingCard
                 handle={heroContent.floatingCards[0].handle}
@@ -228,6 +285,8 @@ export const Hero = () => {
                 avatarSeed={heroContent.floatingCards[0].avatarSeed}
                 position={cardPosition(0)}
                 rotate={-12}
+                draggable={editablePositions}
+                onPointerDown={startDrag("card-0")}
               />
             )}
             {heroContent.floatingCards[1] && (
@@ -238,6 +297,8 @@ export const Hero = () => {
                 position={cardPosition(1)}
                 rotate={12}
                 delay={1}
+                draggable={editablePositions}
+                onPointerDown={startDrag("card-1")}
               />
             )}
 
@@ -253,10 +314,14 @@ export const Hero = () => {
             <a
               href="#contacto"
               aria-label="Ir a contacto"
-              className="absolute z-30 pointer-events-auto"
+              onPointerDown={startDrag("cta")}
+              onClick={(e) => editablePositions && e.preventDefault()}
+              className={`absolute z-30 pointer-events-auto ${
+                editablePositions ? "cursor-grab active:cursor-grabbing touch-none" : ""
+              }`}
               style={{ top: `${badgePosition.top}%`, left: `${badgePosition.left}%` }}
             >
-              <CircularBadge badgeText={heroContent.badgeText} />
+              <CircularBadge badgeText={heroContent.badgeText} draggable={editablePositions} />
             </a>
           </div>
 

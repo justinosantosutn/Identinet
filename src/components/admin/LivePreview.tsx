@@ -3,11 +3,16 @@ import { Monitor, Smartphone } from "lucide-react";
 import { PreviewFrame } from "./PreviewFrame";
 import { PreviewBoundary } from "./PreviewBoundary";
 import { ContentOverride } from "@/lib/content-store";
+import { Hero, type FloatingItemId, type CardPosition } from "@/components/ui/hero";
 
 interface LivePreviewProps {
   sectionKey: string;
   data: unknown;
   PreviewComponent: ComponentType;
+  /** hero only: called when a card or the CTA badge is dragged, in either
+   * preview mode — the drag happens directly on the real component now,
+   * not a separate schematic mock. */
+  onHeroPositionChange?: (id: FloatingItemId, breakpoint: "mobile" | "desktop", position: CardPosition) => void;
 }
 
 const MOBILE_WIDTH = 375;
@@ -18,7 +23,7 @@ const ORIGIN = window.location.origin;
  * useIsMobile hook both key off the actual browser viewport, so a shrunk-down
  * div never actually shows the mobile layout — only a genuinely narrow
  * browsing context (an iframe) does. */
-export const LivePreview = ({ sectionKey, data, PreviewComponent }: LivePreviewProps) => {
+export const LivePreview = ({ sectionKey, data, PreviewComponent, onHeroPositionChange }: LivePreviewProps) => {
   const [mode, setMode] = useState<"desktop" | "mobile">("desktop");
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iframeReady, setIframeReady] = useState(false);
@@ -29,10 +34,14 @@ export const LivePreview = ({ sectionKey, data, PreviewComponent }: LivePreviewP
       if (e.origin !== ORIGIN) return;
       if (e.data?.type === "identinet-preview-ready") setIframeReady(true);
       if (e.data?.type === "identinet-preview-height") setIframeHeight(e.data.height);
+      if (e.data?.type === "identinet-preview-position-change") {
+        onHeroPositionChange?.(e.data.id, e.data.breakpoint, e.data.position);
+      }
     };
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onHeroPositionChange]);
 
   useEffect(() => {
     if (mode !== "mobile" || !iframeReady) return;
@@ -51,7 +60,7 @@ export const LivePreview = ({ sectionKey, data, PreviewComponent }: LivePreviewP
     <div>
       <div className="flex items-center justify-between mb-3">
         <p className="text-xs font-bold uppercase tracking-wide text-on-surface-muted">
-          Preview — así quedaría
+          {sectionKey === "hero" ? "Preview — arrastrá para reposicionar" : "Preview — así quedaría"}
         </p>
         <div className="flex-shrink-0 flex bg-surface-alt rounded-full p-1">
           <button type="button" onClick={() => setMode("desktop")} className={tabClass(mode === "desktop")}>
@@ -76,7 +85,11 @@ export const LivePreview = ({ sectionKey, data, PreviewComponent }: LivePreviewP
         <PreviewBoundary key={JSON.stringify(data)}>
           <PreviewFrame>
             <ContentOverride overrides={{ [sectionKey]: data } as never}>
-              <PreviewComponent />
+              {sectionKey === "hero" ? (
+                <Hero editablePositions onPositionChange={onHeroPositionChange} />
+              ) : (
+                <PreviewComponent />
+              )}
             </ContentOverride>
           </PreviewFrame>
         </PreviewBoundary>

@@ -8,8 +8,7 @@ import { hydrateSite, type SiteConfig } from "@/lib/site";
 import { hydratePacks, type Pack, type ComparisonRow } from "@/data/packs";
 import { hydrateClients, type ClientCase } from "@/data/clients";
 import { LivePreview } from "@/components/admin/LivePreview";
-import { HeroCardPositioner } from "@/components/admin/HeroCardPositioner";
-import { DEFAULT_CARD_POSITIONS, DEFAULT_BADGE_POSITION, type CardPosition } from "@/components/ui/hero";
+import type { FloatingItemId, CardPosition } from "@/components/ui/hero";
 import { previewComponents } from "./previewComponents";
 import { getSection, sections } from "./schemas";
 
@@ -181,6 +180,25 @@ const ContentEditorInner = () => {
 
   const PreviewComponent = previewComponents[section.key];
 
+  const handleHeroPositionChange = (
+    id: FloatingItemId,
+    breakpoint: "mobile" | "desktop",
+    position: CardPosition,
+  ) => {
+    setData((prev: unknown) => {
+      const draft = structuredClone(prev) as HeroDraft;
+      if (id === "cta") {
+        draft.badgePosition = { ...draft.badgePosition, [breakpoint]: position };
+        return draft;
+      }
+      const index = Number(id.replace("card-", ""));
+      const card = draft.floatingCards[index];
+      if (!card) return prev;
+      card.position = { ...card.position, [breakpoint]: position };
+      return draft;
+    });
+  };
+
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3 md:gap-4 mb-2">
@@ -255,43 +273,12 @@ const ContentEditorInner = () => {
       {data !== null && status !== "loading" && (
         <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_440px] gap-6 items-start">
           <div>
-            {section.key === "hero" && (() => {
-              const hero = data as HeroDraft;
-              return (
-                <HeroCardPositioner
-                  items={[
-                    ...(hero.floatingCards ?? []).map((card, i) => ({
-                      id: `card-${i}`,
-                      label: card.handle || `Tarjeta ${i + 1}`,
-                      sublabel: card.metric,
-                      position: card.position,
-                      defaultPosition: DEFAULT_CARD_POSITIONS[i as 0 | 1],
-                    })),
-                    {
-                      id: "cta",
-                      label: "Agendá tu llamada",
-                      position: hero.badgePosition,
-                      defaultPosition: DEFAULT_BADGE_POSITION,
-                      accent: "bg-accent text-white",
-                    },
-                  ]}
-                  onChange={(id, breakpoint, position) => {
-                    setData((prev: unknown) => {
-                      const draft = structuredClone(prev) as HeroDraft;
-                      if (id === "cta") {
-                        draft.badgePosition = { ...draft.badgePosition, [breakpoint]: position };
-                        return draft;
-                      }
-                      const index = Number(id.replace("card-", ""));
-                      const card = draft.floatingCards[index];
-                      if (!card) return prev;
-                      card.position = { ...card.position, [breakpoint]: position };
-                      return draft;
-                    });
-                  }}
-                />
-              );
-            })()}
+            {section.key === "hero" && (
+              <p className="text-xs text-on-surface-muted bg-surface-alt border border-border rounded-xl px-4 py-3 mb-6">
+                Las tarjetas flotantes y el botón de "Agendá tu llamada" se reposicionan arrastrándolos
+                directo en el preview de la derecha (o abajo, en mobile).
+              </p>
+            )}
             <div className="bg-white border border-border rounded-2xl p-6">
             {section.schema.kind === "array" ? (
               <ObjectFields
@@ -311,7 +298,12 @@ const ContentEditorInner = () => {
 
           {PreviewComponent && (
             <div className="xl:sticky xl:top-6">
-              <LivePreview sectionKey={section.key} data={data} PreviewComponent={PreviewComponent} />
+              <LivePreview
+                sectionKey={section.key}
+                data={data}
+                PreviewComponent={PreviewComponent}
+                onHeroPositionChange={section.key === "hero" ? handleHeroPositionChange : undefined}
+              />
             </div>
           )}
         </div>
