@@ -1,10 +1,23 @@
-import { put, list } from "@vercel/blob";
+import { put } from "@vercel/blob";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const contentDir = path.join(__dirname, "..", "..", "src", "content");
+
+// Vercel Blob read-write tokens are shaped `vercel_blob_rw_<storeId>_<secret>`,
+// and public blobs are always served from `https://<storeId>.public.blob.vercel-storage.com/<pathname>`.
+// Building that URL ourselves lets GETs fetch the blob directly instead of calling
+// list() first — list() is billed as an "Advanced Operation" on Vercel Blob and
+// doing one per content key on every page load was exhausting the plan's quota.
+const blobUrlForKey = (key) => {
+  const token = process.env.BLOB_READ_WRITE_TOKEN;
+  if (!token) return null;
+  const storeId = token.split("_")[3];
+  if (!storeId) return null;
+  return `https://${storeId}.public.blob.vercel-storage.com/content/${key}.json`;
+};
 
 const ALLOWED_KEYS = new Set([
   "site",
@@ -36,28 +49,22 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "GET") {
-    try {
-      const { blobs } = await list({ prefix: `content/${key}.json` });
-      const blob = blobs.find((b) => b.pathname === `content/${key}.json`);
-      if (blob) {
-        try {
-          const upstream = await fetch(blob.url, { cache: "no-store" });
-          if (!upstream.ok) throw new Error(`Blob fetch failed with HTTP ${upstream.status}`);
-          const json = await upstream.json();
-          return res.status(200).json(json);
-        } catch (err) {
-          console.error(`Falling back to bundled default for "${key}":`, err);
-          return res.status(200).json(readBundledDefault(key));
-        }
+    const blobUrl = blobUrlForKey(key);
+    if (blobUrl) {
+      try {
+        const upstream = await fetch(blobUrl, { cache: "no-store" });
+        if (!upstream.ok) throw new Error(`Blob fetch failed with HTTP ${upstream.status}`);
+        const json = await upstream.json();
+        return res.status(200).json(json);
+      } catch (err) {
+        console.error(`Falling back to bundled default for "${key}":`, err);
       }
+    }
+    try {
       return res.status(200).json(readBundledDefault(key));
     } catch (err) {
       console.error(err);
-      try {
-        return res.status(200).json(readBundledDefault(key));
-      } catch {
-        return res.status(500).json({ error: "Could not read content", detail: String(err) });
-      }
+      return res.status(500).json({ error: "Could not read content", detail: String(err) });
     }
   }
 
