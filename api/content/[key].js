@@ -1,23 +1,10 @@
-import { put } from "@vercel/blob";
+import { createClient } from "@supabase/supabase-js";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const contentDir = path.join(__dirname, "..", "..", "src", "content");
-
-// Vercel Blob read-write tokens are shaped `vercel_blob_rw_<storeId>_<secret>`,
-// and public blobs are always served from `https://<storeId>.public.blob.vercel-storage.com/<pathname>`.
-// Building that URL ourselves lets GETs fetch the blob directly instead of calling
-// list() first — list() is billed as an "Advanced Operation" on Vercel Blob and
-// doing one per content key on every page load was exhausting the plan's quota.
-const blobUrlForKey = (key) => {
-  const token = process.env.BLOB_READ_WRITE_TOKEN;
-  if (!token) return null;
-  const storeId = token.split("_")[3];
-  if (!storeId) return null;
-  return `https://${storeId}.public.blob.vercel-storage.com/content/${key}.json`;
-};
 
 const ALLOWED_KEYS = new Set([
   "site",
@@ -42,20 +29,32 @@ const readBundledDefault = (key) => {
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));
 };
 
+let supabase = null;
+const getSupabase = () => {
+  if (supabase) return supabase;
+  const url = process.env.SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceKey) return null;
+  supabase = createClient(url, serviceKey, {
+    auth: { persistSession: false },
+  });
+  return supabase;
+};
+
 export default async function handler(req, res) {
   const { key } = req.query;
   if (!ALLOWED_KEYS.has(key)) {
     return res.status(404).json({ error: "Unknown content key" });
   }
 
+  const db = getSupabase();
+
   if (req.method === "GET") {
-    const blobUrl = blobUrlForKey(key);
-    if (blobUrl) {
+    if (db) {
       try {
-        const upstream = await fetch(blobUrl, { cache: "no-store" });
-        if (!upstream.ok) throw new Error(`Blob fetch failed with HTTP ${upstream.status}`);
-        const json = await upstream.json();
-        return res.status(200).json(json);
+        const { data, error } = await db.from("content").select("data").eq("key", key).maybeSingle();
+        if (error) throw error;
+        if (data) return res.status(200).json(data.data);
       } catch (err) {
         console.error(`Falling back to bundled default for "${key}":`, err);
       }
@@ -74,13 +73,15 @@ export default async function handler(req, res) {
     if (passcode !== expected) {
       return res.status(401).json({ error: "Unauthorized" });
     }
-    try {
-      await put(`content/${key}.json`, JSON.stringify(req.body, null, 2), {
-        access: "public",
-        contentType: "application/json",
-        addRandomSuffix: false,
-        allowOverwrite: true,
+    if (!db) {
+      return res.status(500).json({
+        error: "Could not save content",
+        detail: "Supabase is not configured (missing SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY).",
       });
+    }
+    try {
+      const { error } = await db.from("content").upsert({ key, data: req.body });
+      if (error) throw error;
       return res.status(200).json({ ok: true });
     } catch (err) {
       console.error(err);
