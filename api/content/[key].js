@@ -1,4 +1,4 @@
-import { put, list } from "@vercel/blob";
+import { createClient } from "@supabase/supabase-js";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -29,21 +29,37 @@ const readBundledDefault = (key) => {
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));
 };
 
+let supabase = null;
+const getSupabase = () => {
+  if (supabase) return supabase;
+  const url = process.env.SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceKey) return null;
+  supabase = createClient(url, serviceKey, {
+    auth: { persistSession: false },
+  });
+  return supabase;
+};
+
 export default async function handler(req, res) {
   const { key } = req.query;
   if (!ALLOWED_KEYS.has(key)) {
     return res.status(404).json({ error: "Unknown content key" });
   }
 
+  const db = getSupabase();
+
   if (req.method === "GET") {
-    try {
-      const { blobs } = await list({ prefix: `content/${key}.json` });
-      const blob = blobs.find((b) => b.pathname === `content/${key}.json`);
-      if (blob) {
-        const upstream = await fetch(blob.url, { cache: "no-store" });
-        const json = await upstream.json();
-        return res.status(200).json(json);
+    if (db) {
+      try {
+        const { data, error } = await db.from("content").select("data").eq("key", key).maybeSingle();
+        if (error) throw error;
+        if (data) return res.status(200).json(data.data);
+      } catch (err) {
+        console.error(`Falling back to bundled default for "${key}":`, err);
       }
+    }
+    try {
       return res.status(200).json(readBundledDefault(key));
     } catch (err) {
       console.error(err);
@@ -57,13 +73,15 @@ export default async function handler(req, res) {
     if (passcode !== expected) {
       return res.status(401).json({ error: "Unauthorized" });
     }
-    try {
-      await put(`content/${key}.json`, JSON.stringify(req.body, null, 2), {
-        access: "public",
-        contentType: "application/json",
-        addRandomSuffix: false,
-        allowOverwrite: true,
+    if (!db) {
+      return res.status(500).json({
+        error: "Could not save content",
+        detail: "Supabase is not configured (missing SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY).",
       });
+    }
+    try {
+      const { error } = await db.from("content").upsert({ key, data: req.body });
+      if (error) throw error;
       return res.status(200).json({ ok: true });
     } catch (err) {
       console.error(err);

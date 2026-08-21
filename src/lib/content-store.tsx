@@ -84,25 +84,26 @@ export const ContentProvider = ({ children }: { children: ReactNode }) => {
     let cancelled = false;
 
     const load = async () => {
-      try {
-        const entries = await Promise.all(
-          CONTENT_KEYS.map(async (key) => [key, await fetchKey(key)] as const),
-        );
-        if (cancelled) return;
-        const bundle = Object.fromEntries(entries) as unknown as ContentBundle;
-        hydrateSite(bundle.site);
-        hydratePacks(bundle.packs);
-        hydrateClients(bundle.clients);
-        setContent(bundle);
-      } catch (err) {
-        if (cancelled) return;
-        console.error("No se pudo cargar el contenido en vivo, uso el contenido de fábrica.", err);
-        hydrateSite(defaults.site);
-        hydratePacks(defaults.packs);
-        hydrateClients(defaults.clients);
-        setOffline(true);
-        setContent(defaults);
-      }
+      const entries = await Promise.all(
+        CONTENT_KEYS.map(async (key) => {
+          try {
+            return [key, await fetchKey(key)] as const;
+          } catch (err) {
+            console.error(
+              `No se pudo cargar "${key}" en vivo, uso el contenido de fábrica para esa sección.`,
+              err,
+            );
+            return [key, defaults[key]] as const;
+          }
+        }),
+      );
+      if (cancelled) return;
+      const bundle = Object.fromEntries(entries) as unknown as ContentBundle;
+      hydrateSite(bundle.site);
+      hydratePacks(bundle.packs);
+      hydrateClients(bundle.clients);
+      setOffline(entries.some(([key, value]) => value === defaults[key]));
+      setContent(bundle);
     };
 
     load();

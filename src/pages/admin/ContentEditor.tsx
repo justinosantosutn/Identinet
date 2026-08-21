@@ -156,7 +156,11 @@ const ContentEditorInner = () => {
           "Tu sesión de admin venció o quedó incompleta. Recargá esta página y volvé a ingresar el código.",
         );
       }
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        const detail = body?.detail || body?.error;
+        throw new Error(detail ? `HTTP ${res.status}: ${detail}` : `HTTP ${res.status}`);
+      }
       setSavedData(data);
       setStatus("saved");
       // Content is rendered from data fetched once at app boot, so a hard
