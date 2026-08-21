@@ -40,14 +40,24 @@ export default async function handler(req, res) {
       const { blobs } = await list({ prefix: `content/${key}.json` });
       const blob = blobs.find((b) => b.pathname === `content/${key}.json`);
       if (blob) {
-        const upstream = await fetch(blob.url, { cache: "no-store" });
-        const json = await upstream.json();
-        return res.status(200).json(json);
+        try {
+          const upstream = await fetch(blob.url, { cache: "no-store" });
+          if (!upstream.ok) throw new Error(`Blob fetch failed with HTTP ${upstream.status}`);
+          const json = await upstream.json();
+          return res.status(200).json(json);
+        } catch (err) {
+          console.error(`Falling back to bundled default for "${key}":`, err);
+          return res.status(200).json(readBundledDefault(key));
+        }
       }
       return res.status(200).json(readBundledDefault(key));
     } catch (err) {
       console.error(err);
-      return res.status(500).json({ error: "Could not read content", detail: String(err) });
+      try {
+        return res.status(200).json(readBundledDefault(key));
+      } catch {
+        return res.status(500).json({ error: "Could not read content", detail: String(err) });
+      }
     }
   }
 
